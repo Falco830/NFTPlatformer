@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "2aa0c1c3-9b73-f732-7bce-b0aed9f48520": {
+      "ProjectGuid": "2aa0c1c3-9b73-f732-7bce-b0aed9f48520",
+      "DisplayName": "Assembly-CSharp",
+      "ColorIndex": 0
+    },
+    "877f1a38-442d-5816-eb30-e4cbca0f18d5": {
+      "ProjectGuid": "877f1a38-442d-5816-eb30-e4cbca0f18d5",
+      "DisplayName": "Moralis.Web3UnitySdk",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}
