@@ -25,8 +25,6 @@ public class Player : MonoBehaviour
     bool wallSliding;
     public float wallSlidingSpeed;
 
-    public GameObject player;
-
     Animator anim;
     public int fullHealth;
     public int health;
@@ -60,7 +58,9 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         source = GetComponent<AudioSource>();
-    }
+
+        gameObject.transform.SetPositionAndRotation(FindObjectOfType<Checkpoints>().GetComponent<Checkpoints>().checkpoints[0].transform.position, new Quaternion(0, 0, 0, 0));
+  }
 
     private void Update()
     {
