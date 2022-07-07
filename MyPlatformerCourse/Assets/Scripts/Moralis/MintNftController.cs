@@ -25,9 +25,11 @@ namespace AngryBirdsWeb3
         
         [Header("UI Elements")]
         [SerializeField] private GameObject mintPanel;
-        [SerializeField] private Image characterImg;
-        [SerializeField] private Button mintButton;
+        [SerializeField] private Image[] characterImg;
+        [SerializeField] private Button[] mintButton;
         [SerializeField] private TextMeshProUGUI debugLabel;
+
+        private int selectedNFT;
 
         private string _characterImgFilePath;
         
@@ -49,9 +51,10 @@ namespace AngryBirdsWeb3
         
         #region PUBLIC_METHODS
 
-        public async void Mint()
+        public async void Mint(int NFT)
         {
-            mintButton.interactable = false;
+            mintButton[NFT].interactable = false;
+            selectedNFT = NFT;
             debugLabel.text = "Minting... Check on your wallet to confirm transaction";
             
             await RunNftMint();
@@ -85,7 +88,7 @@ namespace AngryBirdsWeb3
             {
                 Debug.Log("Failed to mint NFT :-(");
                 debugLabel.text = "Failed to mint NFT. Try again";
-                mintButton.interactable = true;
+                mintButton[selectedNFT].interactable = true;
             }
         }
 
@@ -97,7 +100,7 @@ namespace AngryBirdsWeb3
         private void ActivateMintPanel()
         {
             #if UNITY_EDITOR
-            _characterImgFilePath = AssetDatabase.GetAssetPath(characterImg.sprite);
+            _characterImgFilePath = AssetDatabase.GetAssetPath(characterImg[selectedNFT].sprite);
             #endif
 
             mintPanel.SetActive(true);

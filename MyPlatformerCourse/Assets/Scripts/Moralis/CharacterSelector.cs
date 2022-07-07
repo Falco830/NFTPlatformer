@@ -44,6 +44,10 @@ using UnityEngine.SceneManagement;
         private string _walletAddress;
         private ChainList _deployedChain = ChainList.mumbai;
 
+        [SerializeField] private GameObject character1;
+        [SerializeField] private GameObject character2;
+        [SerializeField] private GameObject character3;
+
 
   public async void GetTransactions()
   {
@@ -210,12 +214,25 @@ using UnityEngine.SceneManagement;
         
         #region PUBLIC_METHODS
 
-        public void NftButtonClicked()
+        public void NftButtonClicked(int id)
         {
             //TODO
-            OnCharacterSelected?.Invoke((Texture2D) characterImg[0].texture);        
+            OnCharacterSelected?.Invoke((Texture2D) characterImg[id].texture);
+
+            switch (id)
+            {
+              case 1:
+                StaticClass.character = character1;
+                break;
+              case 2:
+                StaticClass.character = character2;
+                break;
+              case 3:
+                StaticClass.character = character3;
+              break;
+            }
             characterPanel.SetActive(false);
-            SceneManager.LoadScene("MainMenu");
+            SceneManager.LoadScene("MainMenuSampleScene");
         }
         
         public void SkipButtonClicked()

@@ -26,4 +26,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level1Custom.unity
     guid: 5e71b7ac440521a47b6529241312f623
+  - enabled: 1
+    path: Assets/Scenes/NFMinter.unity
+    guid: db0f39e0afa4e4b44a9e9b5dcb855276
+  - enabled: 1
+    path: Assets/Scenes/Level2Custom.unity
+    guid: 02a34e07c0291a84cac9b1b23ce79350
+  - enabled: 1
+    path: Assets/Scenes/Level3Custom.unity
+    guid: ae3e86314d26254489e6b8cc50d4d229
   m_configObjects: {}

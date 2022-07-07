@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Pathfinding;
 
 public class Enemy : MonoBehaviour
 {
@@ -10,7 +11,19 @@ public class Enemy : MonoBehaviour
     public GameObject blood;
     public GameObject deathEffect;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+  private void Start()
+  {
+    
+  }
+  private void Update()
+  {
+    if(this.gameObject.GetComponent<AIDestinationSetter>()?.target == null)
+    {
+      this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Player>().transform;
+    }
+  }
+
+  private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Player")
         {
