@@ -22,10 +22,17 @@ public class ViewSwitchController : MonoBehaviour
   // Start is called before the first frame update
   void Start()
     {
-    authKit = authenticationKitObject.GetComponent<AuthenticationKit>();
+      authKit = authenticationKitObject.GetComponent<AuthenticationKit>();
+      if (authKit.State.ToString().Equals("Connected"))
+      {
+        OnConnected();
+      }
+      else
+      {
+        authenticationKitObject.SetActive(true);
+        gameUiObject.SetActive(false);
+      }
 
-    authenticationKitObject.SetActive(true);
-    gameUiObject.SetActive(false);
     }
 
   public void MintAnNFT()
@@ -44,8 +51,8 @@ public class ViewSwitchController : MonoBehaviour
   public void OnConnected()
   {
     authenticationKitObject.SetActive(false);
-    characterSelectorObject.SetActive(true);
     gameUiObject.SetActive(true);
+    characterSelectorObject.SetActive(true);   
     mintNFTObject.SetActive(false);
   }
 
