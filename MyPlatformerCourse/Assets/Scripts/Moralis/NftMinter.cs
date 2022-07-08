@@ -20,6 +20,8 @@ using MoralisUnity;
         private readonly string _contractAddress;
         private bool isInitialized = false;
 
+        private BigInteger _currentTokenId;
+
   public NftMinter(string instanceName, string abi, ChainList chain, string contractAddress)
         {
             _contractInstanceName = instanceName;
@@ -127,17 +129,10 @@ using MoralisUnity;
             byte[] data = Array.Empty<byte>();
             // Mint Token
             // Convert token id to hex as this is what the contract call expects
-           /* object[] pars = {
-                        toAddress,
-                        tokenId.ToString("x"),
-                        amt.ToString("x"),
-                        ipfsMetadataPath,
-                        data
-                    };*/
 
             // Set gas estimate
             HexBigInteger gas = new HexBigInteger(0);
-            HexBigInteger value = new HexBigInteger(0);
+            HexBigInteger value = new HexBigInteger("0x5");
             HexBigInteger gasPrice = new HexBigInteger(0);
 
             object[] pars = {
@@ -152,8 +147,8 @@ using MoralisUnity;
               // IMPORTANT - assumes that mint function is public - this could cause problems so
               // you may want to time box the mint function in your contract or provide other
               // security.
-              //string resp = await Moralis.SendEvmTransactionAsync(_contractInstanceName, _deploymentChain.ToString(), "mint", toAddress, gas, new HexBigInteger("0x0"), pars);
-              string resp = await Moralis.ExecuteContractFunction(toAddress, _contractAbi, "mint",pars, value, gas, gasPrice);
+              Debug.Log("To Address " + toAddress);
+              string resp = await Moralis.ExecuteContractFunction(_contractAddress, _contractAbi, "mint",pars, value, gas, gasPrice);
               Debug.Log(resp);
 
             return resp;
@@ -201,4 +196,23 @@ using MoralisUnity;
         }
 
         #endregion
-    }
+        #region SECONDARY_METHODS
+
+        public void ViewContract()
+        {
+          if (_contractAddress == string.Empty)
+          {
+            Debug.Log("Contract address is not set");
+            return;
+          }
+
+          MoralisTools.Web3Tools.ViewContractOnPolygonScan(_contractAddress);
+        }
+
+        public void ViewOnOpenSea()
+        {
+          MoralisTools.Web3Tools.ViewNftOnTestnetOpenSea(_contractAddress, Moralis.CurrentChain.Name, _currentTokenId.ToString());
+        }
+
+        #endregion
+}
