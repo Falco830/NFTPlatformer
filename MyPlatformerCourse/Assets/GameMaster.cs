@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.SceneManagement;
 
 public class GameMaster : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class GameMaster : MonoBehaviour
   public Vector2 lastCheckpointPos;
   [SerializeField] private GameObject player;
   [SerializeField] private GameObject cmvCam;
+
+  public GameObject gameoverPanel;
 
     // Start is called before the first frame update
     void Awake()
@@ -41,5 +44,20 @@ public class GameMaster : MonoBehaviour
       cmvCam.GetComponent<CinemachineVirtualCamera>().LookAt = player.transform;
     }
 
+    }
+
+    public void DestroyCharacter()
+    {
+      StartCoroutine(DestroyPlayer("CharacterSelect"));
+    }
+
+    IEnumerator DestroyPlayer(string sceneName)
+    {
+    Destroy(player);
+    gameoverPanel = GameObject.Find("Canvas").transform.Find("GameOverPanel").gameObject;
+    gameoverPanel.SetActive(true);
+    yield return new WaitForSeconds(1f);   
+    SceneManager.LoadScene(sceneName);
+      
     }
 }

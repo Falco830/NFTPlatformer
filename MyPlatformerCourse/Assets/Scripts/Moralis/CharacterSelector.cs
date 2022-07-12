@@ -75,7 +75,7 @@ using UnityEngine.SceneManagement;
 
   public async void fetchNFTs()
   {
-    NftOwnerCollection polygonNFTs = await Moralis.Web3Api.Account.GetNFTs("0x15ace62b9f6934211397b802fd5e52eb011a793d".ToLower(), ChainList.polygon);
+    NftOwnerCollection polygonNFTs = await Moralis.Web3Api.Account.GetNFTs("0x9512A1Fa0c635F9DF58B3cA17F68Ad3ABf724a4b".ToLower(), ChainList.polygon);
     Debug.Log(polygonNFTs.ToJson());
   }
 
@@ -103,7 +103,7 @@ using UnityEngine.SceneManagement;
 
   public async void fetchNFTsForContract()
   {
-    NftOwnerCollection polygonNFTs = await Moralis.Web3Api.Account.GetNFTsForContract("0x9512A1Fa0c635F9DF58B3cA17F68Ad3ABf724a4b".ToLower(), "0x15ace62b9f6934211397b802fd5e52eb011a793d", ChainList.polygon);
+    NftOwnerCollection polygonNFTs = await Moralis.Web3Api.Account.GetNFTsForContract("0x9512A1Fa0c635F9DF58B3cA17F68Ad3ABf724a4b".ToLower(), "0x42EeA50b505E99089DFc757017aD6f89eC11B82C", ChainList.polygon);
     SelectCharacter();
     Debug.Log(polygonNFTs.ToJson());
   }
