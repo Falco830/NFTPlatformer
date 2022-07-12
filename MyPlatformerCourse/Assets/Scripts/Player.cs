@@ -29,6 +29,7 @@ public class Player : MonoBehaviour
     public int fullHealth;
     public int health;
     public int lives;
+    public GameObject gameoverPanel;
 
     public float timeBetweenAttacks;
     float nextAttackTime;
@@ -60,7 +61,7 @@ public class Player : MonoBehaviour
         source = GetComponent<AudioSource>();
 
         gameObject.transform.SetPositionAndRotation(FindObjectOfType<Checkpoints>().GetComponent<Checkpoints>().checkpoints[0].transform.position, new Quaternion(0, 0, 0, 0));
-  }
+    }
 
     private void Update()
     {
@@ -159,74 +160,84 @@ public class Player : MonoBehaviour
     public void Respawn()
     {
       if(lives > 0)
-    {
-      lives--;
-      gameObject.transform.position = gameObject.GetComponent<Player>().checkPoint.transform.position;
-      gameObject.GetComponent<Player>().health = fullHealth;
-      //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-      /*GameObject respawnCharacter = gameObject;
-      player.GetComponent<Player>().enabled = true;
-      player.GetComponent<Player>().lives = lives;
-      player.GetComponent<Player>().health = fullHealth;
-      player.GetComponent<Animator>().enabled = true;
-      player.GetComponent<AudioSource>().enabled = true;
-      player.GetComponent<CircleCollider2D>().enabled = true;
-      Player.Instantiate(player, checkPoint.transform.position, Quaternion.identity);*/
-      //Destroy(gameObject);
-    }
-    else
-    {
-      Destroy(gameObject);
+      {
+        lives--;
+        gameObject.transform.position = gameObject.GetComponent<Player>().checkPoint.transform.position;
+        gameObject.GetComponent<Player>().health = fullHealth;
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        /*GameObject respawnCharacter = gameObject;
+        player.GetComponent<Player>().enabled = true;
+        player.GetComponent<Player>().lives = lives;
+        player.GetComponent<Player>().health = fullHealth;
+        player.GetComponent<Animator>().enabled = true;
+        player.GetComponent<AudioSource>().enabled = true;
+        player.GetComponent<CircleCollider2D>().enabled = true;
+        Player.Instantiate(player, checkPoint.transform.position, Quaternion.identity);*/
+        //Destroy(gameObject);
+      }
+      else
+      {
+      GameMaster gm = GameObject.FindObjectOfType<GameMaster>();
+      gm.DestroyCharacter();
+        //StartCoroutine(GameOver("Character Select"));
+      }
+
+      //GameObject newCharacter = Instantiate(respawnCharacter);
+      //newCharacter.GetComponent<Player>().enabled = true;
     }
 
-    //GameObject newCharacter = Instantiate(respawnCharacter);
-    //newCharacter.GetComponent<Player>().enabled = true;
+  IEnumerator GameOver(string sceneName)
+  {
+    gameoverPanel = GameObject.Find("Canvas").transform.Find("GameOverPanel").gameObject;
+    gameoverPanel.SetActive(true);
+    yield return new WaitForSeconds(1f);
+    Destroy(gameObject);
+    SceneManager.LoadScene(sceneName);
+  }
+  public void TakeDamage(int damage) {
+      FindObjectOfType<CameraShake>().Shake();
+      health -= damage;
+      print(health);
+      if (health <= 0)
+      {
+          Instantiate(deathEffect, transform.position, Quaternion.identity);
+          //Destroy(gameObject);
+          Respawn();
+            
+      } else {
+          Instantiate(blood, transform.position, Quaternion.identity);
+      }
   }
 
-    public void TakeDamage(int damage) {
-        FindObjectOfType<CameraShake>().Shake();
-        health -= damage;
-        print(health);
-        if (health <= 0)
-        {
-            Instantiate(deathEffect, transform.position, Quaternion.identity);
-            //Destroy(gameObject);
-            Respawn();
-            
-        } else {
-            Instantiate(blood, transform.position, Quaternion.identity);
-        }
-    }
+  public void Attack() {
 
-    public void Attack() {
+      Instantiate(swordSwingEffect, attackPoint.position, Quaternion.identity);
+      FindObjectOfType<CameraShake>().Shake();
+      Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
+      foreach (Collider2D col in enemiesToDamage)
+      {
+          col.GetComponent<Enemy>().TakeDamage(damage);
+      }
 
-        Instantiate(swordSwingEffect, attackPoint.position, Quaternion.identity);
-        FindObjectOfType<CameraShake>().Shake();
-        Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
-        foreach (Collider2D col in enemiesToDamage)
-        {
-            col.GetComponent<Enemy>().TakeDamage(damage);
-        }
+  }
 
-    }
+  private void OnDrawGizmosSelected()
+  {
+      Gizmos.color = Color.red;
+      Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+  }
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-    }
+  public void Equip(Weapon weapon) {
+      damage = weapon.damage;
+      attackRange = weapon.attackRange;
+      weaponRenderer.sprite = weapon.GFX;
+      Instantiate(pickupEffect, transform.position, Quaternion.identity);
+      Destroy(weapon.gameObject);
+  }
 
-    public void Equip(Weapon weapon) {
-        damage = weapon.damage;
-        attackRange = weapon.attackRange;
-        weaponRenderer.sprite = weapon.GFX;
-        Instantiate(pickupEffect, transform.position, Quaternion.identity);
-        Destroy(weapon.gameObject);
-    }
-
-    public void Land() {
-        Vector2 pos = new Vector2(groundCheck.position.x, groundCheck.position.y + 1);
-        Instantiate(dropEffect, pos, Quaternion.identity);
-    }
+  public void Land() {
+      Vector2 pos = new Vector2(groundCheck.position.x, groundCheck.position.y + 1);
+      Instantiate(dropEffect, pos, Quaternion.identity);
+  }
 
 }

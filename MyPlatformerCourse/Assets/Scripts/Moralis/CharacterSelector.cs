@@ -75,38 +75,38 @@ using UnityEngine.SceneManagement;
 
   public async void fetchNFTs()
   {
-    NftOwnerCollection polygonNFTs = await Moralis.Web3Api.Account.GetNFTs("0x15ace62b9f6934211397b802fd5e52eb011a793d".ToLower(), ChainList.polygon);
+    NftOwnerCollection polygonNFTs = await Moralis.Web3Api.Account.GetNFTs("0x9512A1Fa0c635F9DF58B3cA17F68Ad3ABf724a4b".ToLower(), ChainList.polygon);
     Debug.Log(polygonNFTs.ToJson());
   }
 
   #region UNITY_LIFECYCLE
 
   private void Awake()
-        {
-            //characterImg.gameObject.SetActive(false);
-            debugLabel.text = "Claiming NFT Metadata...".ToUpper();
-        }
+  {
+      //characterImg.gameObject.SetActive(false);
+      debugLabel.text = "Claiming NFT Metadata...".ToUpper();
+  }
 
-        private void OnEnable()
-        {
+  private void OnEnable()
+  {
 
-          debugLabel.text = "Enabling...";
+    debugLabel.text = "Enabling...";
 
-          SelectCharacter();
-        }
+    SelectCharacter();
+  }
 
-        private void OnDisable()
-        {
-          debugLabel.text = "Disabling...";
-          SelectCharacter();
-        }
+  private void OnDisable()
+  {
+    debugLabel.text = "Disabling...";
+    SelectCharacter();
+  }
 
-        public async void fetchNFTsForContract()
-        {
-          NftOwnerCollection polygonNFTs = await Moralis.Web3Api.Account.GetNFTsForContract("0x9512A1Fa0c635F9DF58B3cA17F68Ad3ABf724a4b".ToLower(), "0x15ace62b9f6934211397b802fd5e52eb011a793d", ChainList.polygon);
-          SelectCharacter();
-          Debug.Log(polygonNFTs.ToJson());
-        }
+  public async void fetchNFTsForContract()
+  {
+    NftOwnerCollection polygonNFTs = await Moralis.Web3Api.Account.GetNFTsForContract("0x9512A1Fa0c635F9DF58B3cA17F68Ad3ABf724a4b".ToLower(), "0x42EeA50b505E99089DFc757017aD6f89eC11B82C", ChainList.polygon);
+    SelectCharacter();
+    Debug.Log(polygonNFTs.ToJson());
+  }
 
   #endregion
 
@@ -129,13 +129,11 @@ using UnityEngine.SceneManagement;
                             await Moralis.Web3Api.Account.GetNFTsForContract(_walletAddress.ToLower(),
                                 contractAddress,
                                 _deployedChain);
-
       
               int i = 0;
               foreach (String td in tokenId)
               {
                  NftTransferCollection ntc = await Moralis.Web3Api.Account.GetNFTTransfers(_walletAddress, _deployedChain);
-
 
                 IEnumerable<NftOwner> ownership = from n in noc.Result
                                                   select n;
@@ -158,7 +156,7 @@ using UnityEngine.SceneManagement;
                   var nftMetaData = ownershipList.First().Metadata;
 
                   CustomNftMetadata formattedMetaData = JsonUtility.FromJson<CustomNftMetadata>(nftMetaData);
-                    StartCoroutine(GetTexture(formattedMetaData.image, characterImg[i++]));
+                  StartCoroutine(GetTexture(formattedMetaData.image, characterImg[i++]));
 
                   debugLabel.text = "Success!<br>".ToUpper() + "Select the image to play with the NFT".ToUpper();
                   Debug.Log("Already owns NFT.");
@@ -200,7 +198,6 @@ using UnityEngine.SceneManagement;
         }
 
         #endregion
-
 
         #region EVENT_HANDLERS
 

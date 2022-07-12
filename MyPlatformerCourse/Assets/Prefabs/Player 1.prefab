@@ -447,6 +447,8 @@ MonoBehaviour:
   fullHealth: 6
   health: 6
   lives: 3
+  gameoverPanel: {fileID: 3723423197254969895, guid: f4bbbb40f49a38741a953abac1d8ba46,
+    type: 3}
   timeBetweenAttacks: 0.3
   attackPoint: {fileID: 7456449435855316561}
   attackRange: 1.5

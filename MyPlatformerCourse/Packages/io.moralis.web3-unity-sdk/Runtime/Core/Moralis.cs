@@ -681,10 +681,17 @@ namespace MoralisUnity
                 // Retrieve from address, the address used to authenticate the user.
                 MoralisUser user = await Moralis.GetUserAsync();
                 string fromAddress = user.authData["moralisEth"]["id"].ToString();
+                Debug.Log("Contract Address: " + contractAddress + " From Address: " + fromAddress);
+                if(Web3Client == null)
+                {
+                  Start();
+                  WalletConnectSession client = WalletConnect.Instance.Session;
 
+                  // Create a web3 client using Wallet Connect as write client and a dummy client as read client.
+                  Web3Client = new Web3(client.CreateProvider(new DeadRpcReadClient(Debug.LogError)));
+                }
                 Contract contractInstance = Web3Client.Eth.GetContract(abi, contractAddress);
                 Function function = contractInstance.GetFunction(functionName);
-
                 if (function != null)
                 {
                     result = await function.SendTransactionAsync(fromAddress, gas, value, args);
