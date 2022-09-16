@@ -31,19 +31,25 @@ public class GameMaster : MonoBehaviour
 
     private void InstantiatePlayer()
     {
+      Debug.Log("Instantiateing Player");
       if(StaticClass.character != null)
-    {
-      player = Instantiate(StaticClass.character);
-      cmvCam.GetComponent<CinemachineVirtualCamera>().Follow = player.transform;
-      cmvCam.GetComponent<CinemachineVirtualCamera>().LookAt = player.transform;
-    }
-    else
-    {
-      player = Instantiate(player);
-      cmvCam.GetComponent<CinemachineVirtualCamera>().Follow = player.transform;
-      cmvCam.GetComponent<CinemachineVirtualCamera>().LookAt = player.transform;
+      {
+        player = Instantiate(StaticClass.character);
+        cmvCam.GetComponent<CinemachineVirtualCamera>().Follow = player.transform;
+        cmvCam.GetComponent<CinemachineVirtualCamera>().LookAt = player.transform;
+      }
+      else
+      {
+        player = Instantiate(player);
+        cmvCam.GetComponent<CinemachineVirtualCamera>().Follow = player.transform;
+        cmvCam.GetComponent<CinemachineVirtualCamera>().LookAt = player.transform;
+      }
+
     }
 
+    public void GameMasterWakeup()
+    {
+      Awake();
     }
 
     public void DestroyCharacter()
@@ -58,6 +64,7 @@ public class GameMaster : MonoBehaviour
     gameoverPanel.SetActive(true);
     yield return new WaitForSeconds(1f);   
     SceneManager.LoadScene(sceneName);
+    Destroy(gameObject);
       
     }
 }

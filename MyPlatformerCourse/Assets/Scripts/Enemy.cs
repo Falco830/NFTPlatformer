@@ -17,8 +17,9 @@ public class Enemy : MonoBehaviour
   }
   private void Update()
   {
-    if(this.gameObject.GetComponent<AIDestinationSetter>()?.target == null)
+    if(this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Player>() != null)
     {
+
       this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Player>().transform;
     }
   }

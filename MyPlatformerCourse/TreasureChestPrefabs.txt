@@ -1,0 +1,25 @@
+Prefabs to replace for Treasure Unity
+
+From Most Important
+
+Treasure Chest (open/close)
+Image for Background of Main Menu
+Image for Background of Treasure Chest
+
+
+Icon for Coin
+Icon for NFT/Rewards
+
+Background Sounds
+Sounds for Opening Chest and Clicking buttons
+
+To Less Important
+
+Button Labels
+
+
+
+Background Sounds
+Sounds for Opening Chest, Receiving Reward and Clicking buttons
+
+Not So Important

@@ -5,4 +5,6 @@ using UnityEngine;
 public static class StaticClass
 {
     public static GameObject character { get; set; }
+    public static Player player { get; set; }
+    
 }

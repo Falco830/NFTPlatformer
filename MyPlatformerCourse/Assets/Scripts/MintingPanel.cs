@@ -60,7 +60,10 @@ namespace NFT_Minter
 
         private void OnValidate()
         {
-            metadataUrlText.text = metadataUrl;
+            if(metadataUrlText?.text != null) 
+            { 
+              metadataUrlText.text = metadataUrl; 
+            }            
         }
         public async void Mint(int NFT)
         {
@@ -150,16 +153,17 @@ namespace NFT_Minter
               Debug.Log($"NFT Image file saved to: {ipfsImagePath}");
 
               // Build Metadata
-              object metadata = BuildMetadata(nftName, nftDescription, ipfsImagePath);
-
+              //object metadata = BuildMetadata(nftName, nftDescription, ipfsImagePath);
+              object metadata = MoralisTools.Web3Tools.BuildMetadata(nftName, nftDescription, ipfsImagePath);
               string formatedTokenId = tokenId.ToString().PadLeft(32, '0');
               string metadataName = $"{nftName}_{formatedTokenId}.json";
 
               // Store metadata to IPFS
               string json = JsonConvert.SerializeObject(metadata);
               string base64Data = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+              string ipfsMetadataPath = await MoralisTools.Web3Tools.SaveToIpfs(metadataName, base64Data);
 
-              string ipfsMetadataPath = await SaveToIpfs(metadataName, base64Data);
+              //string ipfsMetadataPath = await SaveToIpfs(metadataName, base64Data);
 
               Debug.Log($"Metadata file saved to: {ipfsMetadataPath}");
 
@@ -167,11 +171,24 @@ namespace NFT_Minter
               {
                 // Execute mint of NFT.
                 string resp = await ExecuteMinting(toWalletAddress, tokenId, ipfsMetadataPath);
-
-                if (resp is { })
-                {
                   result = true;
-                }
+                Debug.Log("Response Reaches here: " + resp);
+                if (resp is null)
+                {
+                  Debug.Log("Response is null: " + resp);
+                  statusText.text = "Transaction failed";
+                  //mintButton.interactable = true;
+                  return false;
+                }                
+                // We tell the GameManager what we minted the item successfully
+                statusText.text = "Transaction completed!";
+                Debug.Log("Response reaches the Transaction: " + statusText.text);
+                Debug.Log($"Token Contract Address: {contractAddress}");
+                Debug.Log($"Token ID: {_currentTokenId}");
+
+                // Activate OpenSea button
+                //mintButton.gameObject.SetActive(false);
+                openSeaButton.gameObject.SetActive(true);
               }
             }
           }
@@ -274,7 +291,6 @@ namespace NFT_Minter
                                 ipfsMetadataPath,
                                 data
                             };
-
       // Set gas configuration. If you set it at 0, your wallet will use its default gas configuration
       HexBigInteger value = new HexBigInteger(UnitConversion.Convert.ToWei(0.05, 18));
             HexBigInteger gas = new HexBigInteger(0);
