@@ -96,6 +96,11 @@ public class CharacterSelector : MonoBehaviour
       viewSwitch.GetComponent<ViewSwitchController>().Quit();
     }
       debugLabel.text = "Claiming NFT Metadata...".ToUpper();
+
+    if (!Moralis.Web3Api.IsInitialized){
+      Moralis.Start();
+    }
+      
   }
 
   private void OnEnable()
@@ -148,44 +153,61 @@ public class CharacterSelector : MonoBehaviour
                             await Moralis.Web3Api.Account.GetNFTsForContract(_walletAddress.ToLower(),
                                 contractAddress,
                                 _deployedChain);
-      
+              NftTransferCollection ntc = await Moralis.Web3Api.Account.GetNFTTransfers(_walletAddress, _deployedChain);
               int i = 0;
               Debug.Log("Tokens Size: " + tokenId.Length);
               foreach (String td in tokenId)
               {
-                Debug.Log("Id: " + i);
-                NftTransferCollection ntc = await Moralis.Web3Api.Account.GetNFTTransfers(_walletAddress, _deployedChain);
-
+                Debug.Log("Id: " + td);                
+                Debug.Log("OwnerShip " + noc.ToJson());
+                Debug.Log("Transfership " + ntc.ToJson());
                 IEnumerable<NftOwner> ownership = from n in noc.Result
-                                                  select n;
-
-                IEnumerable<NftTransfer> transfers = from n in ntc.Result
-                                                  select n;
-
-                ownership = from n in noc.Result
-                                    where n.TokenId.Equals(td)
-                                    select n;
-
-                var transferList = transfers.ToList();
-                Debug.Log("Transfers: " + transferList.ToList().ToString());//First().Value);
-                Debug.Log("ownership.ToList(): " + ownership.ToList());
+                                                  where n.TokenId.Equals(td)
+                                                  select n;     
+                
                 var ownershipList = ownership.ToList();
-                 Debug.Log("Ownership list" + ownershipList.Any());
+                Debug.Log(ownershipList.LongCount());                
+                if(ownershipList.LongCount() == 0)
+                {
+                  continue;
+                }             
+
+                Debug.Log(ownershipList.First().Metadata);
+                IEnumerable<NftTransfer> transfers = from n in ntc.Result
+                                                     where n.TokenId.Equals(td) //And newer than last checkup
+                                                     select n;
+                /*ownership = from n in noc.Result
+                                    where n.TokenId.Equals(td)
+                                    select n;*/
+
+                //var transferList = transfers.ToList();
+                //Debug.Log("Transfers: " + transferList.LongCount());//First().Value);
+                if(transfers.LongCount() == 0)
+                {
+                  continue;
+                }   
                 if (ownershipList.Any()) // If I'm the owner :)
                 {
                   Debug.Log(ownershipList.First().Metadata);
 
-                  var nftMetaData = ownershipList.First().Metadata;
-                  
-                  if(nftMetaData != null) 
+                  foreach(NftOwner own in ownership)   
                   {
-                    CustomNftMetadata formattedMetaData = JsonUtility.FromJson<CustomNftMetadata>(nftMetaData);
-                    StartCoroutine(GetTexture(formattedMetaData.image, characterImg[i++]));
+                    Debug.Log("Owner: " + own.ToJson());
+                    foreach(NftTransfer nft in transfers)
+                    {
+                      Debug.Log("NFT Transfers: " + nft.ToJson());
+                      if (TestCharacterTransaction(GetPlayableCharacter(own.TokenId).GetComponent<Player>().level, double.Parse(nft.Value))) { 
+                        var nftMetaData = ownershipList.First().Metadata;
+                        if(nftMetaData != null) 
+                        {
+                          CustomNftMetadata formattedMetaData = JsonUtility.FromJson<CustomNftMetadata>(nftMetaData);
+                          StartCoroutine(GetTexture(formattedMetaData.image, characterImg[i++]));
+                        }
+                        debugLabel.text = "Success!<br>".ToUpper() + "Select the image to play with the NFT".ToUpper();
+                        Debug.Log("Already owns NFT.");
+                      }
+                    }
                   }
-                  
-
-                  debugLabel.text = "Success!<br>".ToUpper() + "Select the image to play with the NFT".ToUpper();
-                  Debug.Log("Already owns NFT.");
                 }
                 else
                 {
@@ -202,28 +224,47 @@ public class CharacterSelector : MonoBehaviour
             }
         }
 
-        public void TestCharacterTransaction(int characterLevel, int transaction)
+        public GameObject GetPlayableCharacter(string nftID)
+        {
+          switch (nftID)
+          {
+            case "637994607936885724":
+              return character1;
+            case "637994607579971521":
+              return character2;
+            case "637994592393252661":
+              return character3;
+            default:
+              return null;
+          }
+        }
+        public bool TestCharacterTransaction(int characterLevel, double transaction)
         {
           switch (characterLevel)
           {
             case 1: 
-            if(transaction <= 20)
+            if(transaction >= 20)
             {
               StaticClass.player.lives = 6;
+              return true;
             }
-            break;
-          case 2:
-            if (transaction <= 30)
+            return false;
+            case 2:
+            if (transaction >= 30)
             {
               StaticClass.player.lives = 6;
+              return true;
             }
-            break;
-          case 3:
-            if (transaction <= 50)
+            return false;
+            case 3:
+            if (transaction >= 50)
             {
               StaticClass.player.lives = 6;
+              return true;
             }
-            break;
+            return false;
+          default:
+            return false;
           }
         }
         

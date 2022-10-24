@@ -28,7 +28,9 @@ public class Player : MonoBehaviour
     Animator anim;
     public int fullHealth;
     public int health;
-    public int lives;
+    public int lives; 
+    public int level = 1;
+
     public GameObject gameoverPanel;
 
     public float timeBetweenAttacks;

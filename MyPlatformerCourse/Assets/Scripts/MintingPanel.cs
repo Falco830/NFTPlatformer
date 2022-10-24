@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
+using MongoDB.Bson;
 using MoralisUnity;
 using MoralisUnity.Platform.Objects;
 using MoralisUnity.Web3Api.Models;
@@ -27,6 +28,7 @@ namespace NFT_Minter
         [SerializeField] private string contractFunction;
         private const ChainList deploymentChain = ChainList.mumbai;
         private const string contractInstanceName = "MyNftContract";
+        [SerializeField]
         private string _characterImgFilePath;
 
         private BigInteger _currentTokenId;
@@ -69,6 +71,7 @@ namespace NFT_Minter
         {
             mintButton[NFT].interactable = false;
             selectedNFT = NFT;
+            _characterImgFilePath = AssetDatabase.GetAssetPath(metadataImage[NFT].sprite);
             statusText.text = "Minting... Check on your wallet to confirm transaction";
             ActivateMintPanel();
             await RunNftMint();
@@ -83,7 +86,7 @@ namespace NFT_Minter
             long tokenId = DateTime.Now.Ticks;
             
             // Dummy NFT Name.
-            string nftName = $"Moralis_Web3_AngryBirds_{tokenId}";
+            string nftName = $"Climbing_Tower_{tokenId}";
 
             //NftMinter minter = new NftMinter(contractInstanceName, contractAbi, deploymentChain, contractAddress);
             Debug.Log("InstanceName " + contractInstanceName + " Abi " + contractAbi + " DeploymentChain " + deploymentChain + " Address " + contractAddress);
@@ -300,6 +303,31 @@ namespace NFT_Minter
 
             return resp;
         }
+
+   /* private async string SaveToMongoAtlas(string name, string data)
+    {
+      var fileName = "D:\\Untitled.png";
+      var newFileName = "D:\\new_Untitled.png";
+      using (var fs = new FileStream(fileName, FileMode.Open))
+      {
+        var gridFsInfo = await database.GridFS.Upload(fs, fileName);
+        var fileId = gridFsInfo.Id;
+
+        ObjectId oid = new ObjectId(fileId);
+        var file = await database.GridFS.FindOne(Query.EQ("_id", oid));
+
+        using (var stream = file.OpenRead())
+        {
+          var bytes = new byte[stream.Length];
+          stream.Read(bytes, 0, (int)stream.Length);
+          using (var newFs = new FileStream(newFileName, FileMode.Create))
+          {
+            newFs.Write(bytes, 0, bytes.Length);
+          }
+        }
+      }
+      return null;
+    }*/
     private async Task<string> SaveToIpfs(string name, string data)
     {
       string pinPath = null;
@@ -350,6 +378,8 @@ namespace NFT_Minter
         _characterImgFilePath = AssetDatabase.GetAssetPath(metadataImage[selectedNFT].sprite);
         #endif
     }
+
+
 
     #endregion
 
