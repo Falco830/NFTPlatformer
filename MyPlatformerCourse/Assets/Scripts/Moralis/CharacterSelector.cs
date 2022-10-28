@@ -31,7 +31,11 @@ public class CustomNftMetadata
 public class CharacterSelector : MonoBehaviour
     {
         public static event Action<Texture2D> OnCharacterSelected; //TODO passar la imatge/sprite/textura
-        
+
+        private DatabaseAccess databaseAccess;
+
+
+
         [Header("NFT Data")]
         [SerializeField] private string contractAddress;
         [SerializeField] private string[] tokenId;
@@ -54,8 +58,11 @@ public class CharacterSelector : MonoBehaviour
 
         MoralisUnity.Kits.AuthenticationKit.AuthenticationKitStateObservable _stateObservable = new MoralisUnity.Kits.AuthenticationKit.AuthenticationKitStateObservable();
 
-
-  public async void GetTransactions()
+  void Start()
+  {
+    databaseAccess = GameObject.FindGameObjectWithTag("DatabaseAccess").GetComponent<DatabaseAccess>();
+  }
+    public async void GetTransactions()
   {
     // get BSC transactions for a given address
     TransactionCollection BSCtransactions = await Moralis.Web3Api.Account.GetTransactions("0x3d6c0e79a1239df0039ec16Cc80f7A343b6C530e".ToLower(), ChainList.bsc);
@@ -154,7 +161,10 @@ public class CharacterSelector : MonoBehaviour
                                 contractAddress,
                                 _deployedChain);
               NftTransferCollection ntc = await Moralis.Web3Api.Account.GetNFTTransfers(_walletAddress, _deployedChain);
-              int i = 0;
+              var task = databaseAccess.GetScoresFromDataBase();
+              var result = await task;
+
+              bool validNFT = false;
               Debug.Log("Tokens Size: " + tokenId.Length);
               foreach (String td in tokenId)
               {
@@ -189,24 +199,40 @@ public class CharacterSelector : MonoBehaviour
                 if (ownershipList.Any()) // If I'm the owner :)
                 {
                   Debug.Log(ownershipList.First().Metadata);
-
+                  int i = 0;
                   foreach(NftOwner own in ownership)   
                   {
                     Debug.Log("Owner: " + own.ToJson());
+                    
                     foreach(NftTransfer nft in transfers)
                     {
+
                       Debug.Log("NFT Transfers: " + nft.ToJson());
-                      if (TestCharacterTransaction(GetPlayableCharacter(own.TokenId).GetComponent<Player>().level, double.Parse(nft.Value))) { 
-                        var nftMetaData = ownershipList.First().Metadata;
-                        if(nftMetaData != null) 
+              
+                      if (DateTime.Compare(DateTime.Parse(nft.BlockTimestamp), DateTime.Parse(result[i].DateOfLastValidTransaction)) > 0)
+                      {
+                        if (TestCharacterTransaction(GetPlayableCharacter(own.TokenId).GetComponent<Player>().level, double.Parse(nft.Value))) 
                         {
-                          CustomNftMetadata formattedMetaData = JsonUtility.FromJson<CustomNftMetadata>(nftMetaData);
-                          StartCoroutine(GetTexture(formattedMetaData.image, characterImg[i++]));
+                          databaseAccess.UpdateDateOfLastValidTransaction(nft.BlockTimestamp, Int32.Parse(own.TokenId));
+                          validNFT = true;
                         }
-                        debugLabel.text = "Success!<br>".ToUpper() + "Select the image to play with the NFT".ToUpper();
-                        Debug.Log("Already owns NFT.");
                       }
                     }
+                    validNFT = true;
+                    var nftMetaData = ownershipList.First().Metadata;
+                    if (nftMetaData != null && validNFT)
+                    {
+                      CustomNftMetadata formattedMetaData = JsonUtility.FromJson<CustomNftMetadata>(nftMetaData);
+                      StartCoroutine(GetTexture(formattedMetaData.image, characterImg[i++]));
+                      //Enable NFT Button
+                      debugLabel.text = "Success!<br>".ToUpper() + "Select the image to play with the NFT".ToUpper();
+                      Debug.Log("Already owns NFT.");
+                      //When Enabled move onto next tokenID
+                      break;
+                    }
+                    //debugLabel.text = "Success!<br>".ToUpper() + "Select the image to play with the NFT".ToUpper();
+                    //Debug.Log("Already owns NFT.");
+
                   }
                 }
                 else
