@@ -17,23 +17,24 @@ public class Enemy : MonoBehaviour
   }
   private void Update()
   {
-    if(this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Player>() != null)
+    /*if(this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Player>() != null)
     {
 
       this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Player>().transform;
-    }
+    }*/
   }
 
   private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.tag == "Player")
-        {
-            collision.GetComponent<Player>().TakeDamage(damage);
-        }
-    }
+  {
+      if (collision.tag == "Player")
+      {
+          collision.GetComponent<Player>().TakeDamage(damage);
+      }
+  }
 
     public void TakeDamage(int damage) {
         health -= damage;
+        Debug.Log("damage" + health);
         if (health <= 0)
         {
             Instantiate(deathEffect, transform.position, Quaternion.identity);

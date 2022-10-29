@@ -16,4 +16,8 @@ public class CameraShake : MonoBehaviour
         anim.SetTrigger("shake");
     }
 
+    public void ZoomOut()
+    {
+      anim.SetTrigger("ZoomOut");
+    }
 }
