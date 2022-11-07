@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
+using UnityEngine.SceneManagement;
 
 public class Enemy : MonoBehaviour
 {
@@ -17,11 +18,15 @@ public class Enemy : MonoBehaviour
   }
   private void Update()
   {
-    /*if(this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Player>() != null)
+    if (!SceneManager.GetActiveScene().name.Equals("Level3Custom"))
     {
+      if(this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Player>() != null)
+      {
 
-      this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Player>().transform;
-    }*/
+        this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Player>().transform;
+      }
+    }
+
   }
 
   private void OnTriggerEnter2D(Collider2D collision)
@@ -37,6 +42,7 @@ public class Enemy : MonoBehaviour
         Debug.Log("damage" + health);
         if (health <= 0)
         {
+            //this.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
             Instantiate(deathEffect, transform.position, Quaternion.identity);
             Destroy(gameObject);
         } else {

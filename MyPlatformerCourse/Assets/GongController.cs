@@ -13,15 +13,26 @@ public class GongController : MonoBehaviour
   float waitTime;
   public float startWaitTime;
 
+  public BattleBegins battleState;
+
   public bool asleep = true;
   public bool wakingUp = false;
   public bool awake = false;
   public CinemachineVirtualCamera mainCamera;
 
+
+  public GameObject fireBall;
+  public float timeBetweenShots;
+  float nextShotTime;
+  public Transform shotPoint;
+  public Transform player;
+
+  public Transform target;
   // Start is called before the first frame update
   void Start()
     {
-        
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        gameObject.layer = 8;
     }
 
     // Update is called once per frame
@@ -31,7 +42,7 @@ public class GongController : MonoBehaviour
       if (awake)
       {
         //gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(-30, 30);
-
+        gameObject.layer = 9;
         transform.position = Vector2.MoveTowards(transform.position, patrolPoints[currentPointIndex].position, speed * Time.deltaTime);
         if (transform.position == patrolPoints[currentPointIndex].position)
         {
@@ -51,6 +62,13 @@ public class GongController : MonoBehaviour
           {
             waitTime -= Time.deltaTime;
           }
+  
+        }
+        if (Time.time > nextShotTime)
+        {
+          //shotPoint.transform.LookAt(target);
+          Instantiate(fireBall, shotPoint.position, shotPoint.rotation);
+          nextShotTime = Time.time + timeBetweenShots;
         }
       }
 
@@ -74,6 +92,7 @@ public class GongController : MonoBehaviour
         gameObject.GetComponent<AudioSource>().Play();
         gameObject.GetComponent<SpriteRenderer>().color = Color.gray;//awakening;
         mainCamera.GetComponent<CameraShake>().ZoomOut();
+        gameObject.GetComponent<BoxCollider2D>().enabled = false;
         //asleep = false;
         wakingUp = true;
       }
@@ -103,6 +122,11 @@ public class GongController : MonoBehaviour
     {
       collision.transform.parent = null;
     }
+  }
+
+  private void OnDestroy()
+  {
+    battleState.DeadHeads();
   }
 
 }

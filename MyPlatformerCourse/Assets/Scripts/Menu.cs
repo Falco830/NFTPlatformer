@@ -7,9 +7,10 @@ public class Menu : MonoBehaviour
 {
 
     public GameObject panel;
-
-    public void LoadScene(string sceneName) {
-
+  [SerializeField] private GameObject character1;
+  public void LoadScene(string sceneName) {
+        StaticClass.character = character1;
+        Debug.Log(StaticClass.character);
         StartCoroutine(FadeIn(sceneName));
 
     }

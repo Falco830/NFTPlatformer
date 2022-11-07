@@ -12,12 +12,17 @@ public class GameMaster : MonoBehaviour
   [SerializeField] private GameObject player;
   [SerializeField] private GameObject cmvCam;
 
+  [SerializeField] private GameObject sword;
+
   public GameObject gameoverPanel;
 
     // Start is called before the first frame update
     void Awake()
     {
-        if(instance == null)
+
+    Debug.Log("Instance " + instance);
+    Debug.Log("StaticClass.character " + StaticClass.character);
+    if (instance == null)
           {
             InstantiatePlayer();
             instance = this;
@@ -43,6 +48,17 @@ public class GameMaster : MonoBehaviour
       if(StaticClass.character != null)
       {
         player = Instantiate(StaticClass.character);
+        
+      Debug.Log("Player " + StaticClass.weapon);
+        if(StaticClass.GFX != null)
+        {
+        player.GetComponent<Player>().damage = StaticClass.damage;
+        player.GetComponent<Player>().attackRange = StaticClass.attackRange;
+        player.GetComponent<Player>().weaponRenderer.sprite = StaticClass.GFX;
+
+        }
+        
+          
         cmvCam.GetComponent<CinemachineVirtualCamera>().Follow = player.transform;
         cmvCam.GetComponent<CinemachineVirtualCamera>().LookAt = player.transform;
       }
@@ -62,7 +78,7 @@ public class GameMaster : MonoBehaviour
 
     public void DestroyCharacter()
     {
-      StartCoroutine(DestroyPlayer("CharacterSelect"));
+      StartCoroutine(DestroyPlayer("MainMenuSampleScene"));
     }
 
     IEnumerator DestroyPlayer(string sceneName)

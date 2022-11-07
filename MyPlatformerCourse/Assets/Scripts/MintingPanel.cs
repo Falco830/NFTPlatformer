@@ -32,7 +32,7 @@ namespace NFT_Minter
         private string _characterImgFilePath;
 
         private BigInteger _currentTokenId;
-        private bool isInitialized = false;
+        //private bool isInitialized = false;
 
         [Header("NFT Metadata")]
         [SerializeField] private string metadataUrl;
@@ -71,7 +71,7 @@ namespace NFT_Minter
         {
             mintButton[NFT].interactable = false;
             selectedNFT = NFT;
-            _characterImgFilePath = AssetDatabase.GetAssetPath(metadataImage[NFT].sprite);
+            //_characterImgFilePath = AssetDatabase.GetAssetPath(metadataImage[NFT].sprite);
             statusText.text = "Minting... Check on your wallet to confirm transaction";
             ActivateMintPanel();
             await RunNftMint();
@@ -125,7 +125,7 @@ namespace NFT_Minter
         MoralisUser user = await Moralis.GetUserAsync();
         if (user != null)
         {
-          isInitialized = true;
+          //isInitialized = true;
 
           string toWalletAddress = user.ethAddress;
           Debug.Log(toWalletAddress);
@@ -217,10 +217,10 @@ namespace NFT_Minter
             string nftDescription = "NFT created using Moralis Unity SDK!";
 
             byte[] fileData = Array.Empty<byte>();
-            string filePath = AssetDatabase.GetAssetPath(metadataImage[selectedNFT].sprite);
-            string imageName = Path.GetFileName(filePath);
+      //string filePath = AssetDatabase.GetAssetPath(metadataImage[selectedNFT].sprite);
+      string imageName = "";//Path.GetFileName(filePath);
 
-            metadataUrl = Path.GetFileName(filePath);
+            metadataUrl = Path.GetFileName(""/*filePath*/);
 
             if (metadataUrl == string.Empty)
             {

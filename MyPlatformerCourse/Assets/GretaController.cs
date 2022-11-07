@@ -15,10 +15,13 @@ public class GretaController : MonoBehaviour
   public bool asleep = true;
   public bool wakingUp = false;
   public bool awake = false;
+
+  public BattleBegins battleState;
+
   // Start is called before the first frame update
   void Start()
     {
-        
+        gameObject.layer = 8;
     }
 
     // Update is called once per frame
@@ -26,7 +29,7 @@ public class GretaController : MonoBehaviour
   {
     if (awake)
     {
-
+      gameObject.layer = 9;
       transform.position = Vector2.MoveTowards(transform.position, patrolPoints[currentPointIndex].position, speed * Time.deltaTime);
       if (transform.position == patrolPoints[currentPointIndex].position)
       {
@@ -66,8 +69,9 @@ public class GretaController : MonoBehaviour
         //Color awakening = new Color(4, 55, 255, 255);
         gameObject.GetComponent<AudioSource>().Play();
         gameObject.GetComponent<SpriteRenderer>().color = Color.blue;//awakening;
-          //asleep = false;
-          wakingUp = true;
+        gameObject.GetComponent<BoxCollider2D>().enabled = false;
+        //asleep = false;
+        wakingUp = true;
         }
 
       }
@@ -94,5 +98,10 @@ public class GretaController : MonoBehaviour
     {
       collision.transform.parent = null;
     }
+  }
+
+  private void OnDestroy()
+  {
+    battleState.DeadHeads();
   }
 }

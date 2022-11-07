@@ -24,22 +24,25 @@ public class CheckpointSpecial : Checkpoint
 
   private void OnDestroy()
   {
-    Checkpoint[] chec = new Checkpoint[GameObject.Find("CheckpointsLevel3").GetComponent<Checkpoints>().checkpoints.Length - 1];
+      Checkpoint[] chec = new Checkpoint[GameObject.Find("CheckpointsLevel3").GetComponent<Checkpoints>().checkpoints.Length - 1];
     int i = 0;
     foreach (Checkpoint ch in GameObject.Find("CheckpointsLevel3").GetComponent<Checkpoints>().checkpoints)
     {
       if(ch == this)
       {
-
+        Debug.Log("Same Checkpoint");
       }
       else     
       {
         chec[i++] = ch;
       }
     }
-    chec[0].isActive = true;
-    GameObject.Find("Player").GetComponent<Player>().checkPoint = chec[0];
-    GameObject.Find("CheckpointsLevel3").GetComponent<Checkpoints>().checkpoints = chec;
+    if (i != 0)
+    {
+      chec[0].isActive = true;
+      GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().checkPoint = chec[0];
+      GameObject.Find("CheckpointsLevel3").GetComponent<Checkpoints>().checkpoints = chec;
+    }
 
   }
 }

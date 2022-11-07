@@ -62,9 +62,20 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animator>();
         source = GetComponent<AudioSource>();
 
+        Debug.Log("Weapon " + StaticClass.weapon);
+
+        if(StaticClass.weapon != null)
+        {
+            Weapon newWeapon = new Weapon();
+            newWeapon.GFX = StaticClass.GFX;
+            newWeapon.attackRange = StaticClass.attackRange;
+            newWeapon.damage = StaticClass.damage;
+            Equip(newWeapon);
+        }
+
         gameObject.transform.SetPositionAndRotation(FindObjectOfType<Checkpoints>().GetComponent<Checkpoints>().checkpoints[0].transform.position, new Quaternion(0, 0, 0, 0));
     }
-
+   
     private void Update()
     {
 
@@ -181,7 +192,7 @@ public class Player : MonoBehaviour
       {
       GameMaster gm = GameObject.FindObjectOfType<GameMaster>();
       gm.DestroyCharacter();
-        //StartCoroutine(GameOver("Character Select"));
+        StartCoroutine(GameOver("MainMenuSampleScene"));
       }
 
       //GameObject newCharacter = Instantiate(respawnCharacter);
@@ -191,7 +202,7 @@ public class Player : MonoBehaviour
   IEnumerator GameOver(string sceneName)
   {
     gameoverPanel = GameObject.Find("Canvas").transform.Find("GameOverPanel").gameObject;
-    gameoverPanel.SetActive(true);
+    gameoverPanel.SetActive(true);    
     yield return new WaitForSeconds(1f);
     Destroy(gameObject);
     SceneManager.LoadScene(sceneName);
@@ -234,7 +245,18 @@ public class Player : MonoBehaviour
       attackRange = weapon.attackRange;
       weaponRenderer.sprite = weapon.GFX;
       Instantiate(pickupEffect, transform.position, Quaternion.identity);
+    
+    if (weapon.name != null)
+    {
+
+      StaticClass.damage = weapon.damage;
+      StaticClass.attackRange = weapon.attackRange;
+      StaticClass.GFX = weapon.GFX;
+
       Destroy(weapon.gameObject);
+      Debug.Log("Deleting Wep" + StaticClass.weapon);
+    }
+      
   }
 
   public void Land() {
