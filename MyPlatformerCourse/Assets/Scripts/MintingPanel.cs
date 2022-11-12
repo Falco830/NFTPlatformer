@@ -6,7 +6,6 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
-using MongoDB.Bson;
 using MoralisUnity;
 using MoralisUnity.Platform.Objects;
 using MoralisUnity.Web3Api.Models;
@@ -18,9 +17,18 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Pinata.Client;
+using Flurl.Http;
+using System.Net.Http;
+using System.Net.Mime;
+
+//using Task = System.Threading.Tasks;
+
+//using Task = System;
+
 namespace NFT_Minter
 {
-    public class MintingPanel : MonoBehaviour
+  public class MintingPanel : MonoBehaviour
     {
         [Header("Smart Contract Data")]
         [SerializeField] private string contractAddress;
@@ -379,13 +387,61 @@ namespace NFT_Minter
         #endif
     }
 
+    //Pinata Code
+    public async void PinataUpload()
+    {
+      var config = new Config
+      {
+        ApiKey = "2981f1eb1813daf...",
+        ApiSecret = "42281fa28de32fe3c..."
+      };
 
+      var client = new PinataClient(config);
 
-    #endregion
+      var html = @"
+      <html>
+         <head>
+            <title>Hello IPFS!</title>
+         </head>
+         <body>
+            <h1>Hello World</h1>
+         </body>
+      </html>
+      ";
 
-    #region SECONDARY_METHODS
+      var metadata = new PinataMetadata // optional
+      {
+        KeyValues =
+         {
+            {"Author", "Brian Chavez"}
+         }
+      };
 
-    public void ViewContract()
+      var options = new PinataOptions(); // optional
+
+      options.CustomPinPolicy.AddOrUpdateRegion("NYC1", desiredReplicationCount: 1);
+
+      var response = await client.Pinning.PinFileToIpfsAsync(content =>
+      {
+        var file = new StringContent(html, Encoding.UTF8, MediaTypeNames.Text.Html);
+
+        content.AddPinataFile(file, "index.html");
+      },
+         metadata,
+         options);
+
+      if (response.IsSuccess)
+      {
+        //File uploaded to Pinata Cloud and can be accessed on IPFS!
+        var hash = response.IpfsHash; // QmR9HwzakHVr67HFzzgJHoRjwzTTt4wtD6KU4NFe2ArYuj
+      }
+    }
+
+  #endregion
+
+  #region SECONDARY_METHODS
+
+  public void ViewContract()
         {
             if (contractAddress == string.Empty)
             {

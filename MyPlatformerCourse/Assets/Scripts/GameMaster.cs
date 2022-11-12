@@ -78,7 +78,7 @@ public class GameMaster : MonoBehaviour
 
     public void DestroyCharacter()
     {
-      StartCoroutine(DestroyPlayer("MainMenuSampleScene"));
+      StartCoroutine(DestroyPlayer("CharacterSelect"));
     }
 
     IEnumerator DestroyPlayer(string sceneName)

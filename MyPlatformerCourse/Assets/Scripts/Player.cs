@@ -192,7 +192,7 @@ public class Player : MonoBehaviour
       {
       GameMaster gm = GameObject.FindObjectOfType<GameMaster>();
       gm.DestroyCharacter();
-        StartCoroutine(GameOver("MainMenuSampleScene"));
+        StartCoroutine(GameOver("CharacterSelect"));
       }
 
       //GameObject newCharacter = Instantiate(respawnCharacter);
