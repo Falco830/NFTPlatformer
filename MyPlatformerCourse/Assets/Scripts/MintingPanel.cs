@@ -18,7 +18,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Pinata.Client;
-using Flurl.Http;
 using System.Net.Http;
 using System.Net.Mime;
 
@@ -156,8 +155,9 @@ namespace NFT_Minter
 
           if (fileData.Length > 0)
           {
-            // Same image to IPFS
-            string ipfsImagePath = await SaveToIpfs(imageName, fileData);
+          //Texture2D cardImage = (Texture2D)Resources.LoadAssetAtPath(Application.dataPath + filePath, typeof(Texture2D));
+          // Same image to IPFS
+          string ipfsImagePath = await PinataUpload(imageName, fileData);//await SaveToIpfs(imageName, fileData);
 
             if (!String.IsNullOrEmpty(ipfsImagePath))
             {
@@ -388,44 +388,37 @@ namespace NFT_Minter
     }
 
     //Pinata Code
-    public async void PinataUpload()
+    public async Task<string> PinataUpload(string name, byte[] data)
     {
+      //Convert.ToBase64String(data)
       var config = new Config
       {
-        ApiKey = "2981f1eb1813daf...",
-        ApiSecret = "42281fa28de32fe3c..."
+        ApiKey = "c68eebb328505cc7c1e9",
+        ApiSecret = "5971d27e9dc16a96a64b5b4e47e6cc58851242d4b1209ebe98d45a104f1032d8"
       };
 
       var client = new PinataClient(config);
 
-      var html = @"
-      <html>
-         <head>
-            <title>Hello IPFS!</title>
-         </head>
-         <body>
-            <h1>Hello World</h1>
-         </body>
-      </html>
-      ";
+      long tokenId = DateTime.Now.Ticks;
+      string nftName = $"Climbing_Tower_{tokenId}";
 
       var metadata = new PinataMetadata // optional
       {
         KeyValues =
          {
-            {"Author", "Brian Chavez"}
+            {"Author", nftName}
          }
       };
 
       var options = new PinataOptions(); // optional
 
-      options.CustomPinPolicy.AddOrUpdateRegion("NYC1", desiredReplicationCount: 1);
-
-      var response = await client.Pinning.PinFileToIpfsAsync(content =>
+        options.CustomPinPolicy.AddOrUpdateRegion("NYC1", desiredReplicationCount: 1);
+        var response = await client.Pinning.PinFileToIpfsAsync(content =>
       {
-        var file = new StringContent(html, Encoding.UTF8, MediaTypeNames.Text.Html);
-
-        content.AddPinataFile(file, "index.html");
+        HttpContent file = new ByteArrayContent(data); //Convert.ToBase64String(
+        //HttpContent imageContent;
+          
+         content.AddPinataFile(file, name);
       },
          metadata,
          options);
@@ -434,7 +427,10 @@ namespace NFT_Minter
       {
         //File uploaded to Pinata Cloud and can be accessed on IPFS!
         var hash = response.IpfsHash; // QmR9HwzakHVr67HFzzgJHoRjwzTTt4wtD6KU4NFe2ArYuj
+        var url = "https://gateway.pinata.cloud/ipfs/" + hash;
+        return url.ToString();
       }
+      return null;
     }
 
   #endregion

@@ -200,9 +200,9 @@ public class CharacterSelector : MonoBehaviour
                 {
                   Debug.Log(ownershipList.First().Metadata);
                   int i = 0;
-                  foreach(NftOwner own in ownership)   
+                  /*foreach(NftOwner own in ownership)   
                   {
-                    Debug.Log("Owner: " + own.ToJson());
+                    /* Debug.Log("Owner: " + own.ToJson());
                     
                     foreach(NftTransfer nft in transfers)
                     {
@@ -219,11 +219,17 @@ public class CharacterSelector : MonoBehaviour
                       }
                     }
                     validNFT = true;
-                    var nftMetaData = ownershipList.First().Metadata;
-                    if (nftMetaData != null && validNFT)
+                    */
+            //String imageData = ownershipList.First().Metadata;
+            var nftMetaData = ownershipList.First().Metadata;
+                    //var nftMetaData = imageData.Substring(imageData.IndexOf("image") + 7, imageData.IndexOf("}") - (imageData.IndexOf("image") + 7));
+                    Debug.Log(nftMetaData);
+                    if (nftMetaData != null /*&& validNFT*/)
                     {
                       CustomNftMetadata formattedMetaData = JsonUtility.FromJson<CustomNftMetadata>(nftMetaData);
+                      Debug.Log("Image" + formattedMetaData.image);
                       StartCoroutine(GetTexture(formattedMetaData.image, characterImg[i++]));
+                    
                       //Enable NFT Button
                       debugLabel.text = "Success!<br>".ToUpper() + "Select the image to play with the NFT".ToUpper();
                       Debug.Log("Already owns NFT.");
@@ -233,7 +239,7 @@ public class CharacterSelector : MonoBehaviour
                     //debugLabel.text = "Success!<br>".ToUpper() + "Select the image to play with the NFT".ToUpper();
                     //Debug.Log("Already owns NFT.");
 
-                  }
+                  //}
                 }
                 else
                 {
