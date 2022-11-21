@@ -779,7 +779,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 3}
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 14
     m_FontStyle: 0
     m_BestFit: 0
@@ -886,7 +886,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 3}
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 32
     m_FontStyle: 1
     m_BestFit: 0
@@ -1284,7 +1284,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 3}
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 14
     m_FontStyle: 0
     m_BestFit: 0
@@ -1789,17 +1789,17 @@ PrefabInstance:
     - target: {fileID: 837213972041378261, guid: f1f95b22c9b7de8468a359b2b9b099e0,
         type: 3}
       propertyPath: tokenId.Array.data[0]
-      value: 638041559705397964
+      value: 638041597201268140
       objectReference: {fileID: 0}
     - target: {fileID: 837213972041378261, guid: f1f95b22c9b7de8468a359b2b9b099e0,
         type: 3}
       propertyPath: tokenId.Array.data[1]
-      value: 637994607579971521
+      value: 638041559705397964
       objectReference: {fileID: 0}
     - target: {fileID: 837213972041378261, guid: f1f95b22c9b7de8468a359b2b9b099e0,
         type: 3}
       propertyPath: tokenId.Array.data[2]
-      value: 637994592393252661
+      value: 638040712734052414
       objectReference: {fileID: 0}
     - target: {fileID: 837213972041378261, guid: f1f95b22c9b7de8468a359b2b9b099e0,
         type: 3}
@@ -3028,7 +3028,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 3}
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1

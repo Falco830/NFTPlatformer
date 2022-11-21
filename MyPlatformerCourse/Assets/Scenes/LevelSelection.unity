@@ -1634,7 +1634,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chains: {fileID: 777324827}
-  sceneName: Level2
+  sceneName: Level2Custom
 --- !u!1 &1232329026
 GameObject:
   m_ObjectHideFlags: 0
@@ -2028,7 +2028,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chains: {fileID: 1152353763}
-  sceneName: Level3
+  sceneName: Level3Custom
 --- !u!1 &1461344085
 GameObject:
   m_ObjectHideFlags: 0

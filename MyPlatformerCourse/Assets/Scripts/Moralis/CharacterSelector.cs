@@ -164,11 +164,13 @@ public class CharacterSelector : MonoBehaviour
               var task = databaseAccess.GetScoresFromDataBase();
               var result = await task;
 
-              bool validNFT = false;
+              //bool validNFT = false;
               Debug.Log("Tokens Size: " + tokenId.Length);
-              foreach (String td in tokenId)
-              {
-                Debug.Log("Id: " + td);                
+              int i = 0;
+
+            foreach(String td in tokenId)
+            {
+                Debug.Log("Id: " + td);      
                 Debug.Log("OwnerShip " + noc.ToJson());
                 Debug.Log("Transfership " + ntc.ToJson());
                 IEnumerable<NftOwner> ownership = from n in noc.Result
@@ -179,7 +181,7 @@ public class CharacterSelector : MonoBehaviour
                 Debug.Log(ownershipList.LongCount());                
                 if(ownershipList.LongCount() == 0)
                 {
-                  continue;
+                  //continue;
                 }             
 
                 Debug.Log(ownershipList.First().Metadata);
@@ -194,12 +196,12 @@ public class CharacterSelector : MonoBehaviour
                 //Debug.Log("Transfers: " + transferList.LongCount());//First().Value);
                 if(transfers.LongCount() == 0)
                 {
-                  continue;
+                  //continue;
                 }   
                 if (ownershipList.Any()) // If I'm the owner :)
                 {
                   Debug.Log(ownershipList.First().Metadata);
-                  int i = 0;
+                  //int i = 0;
                   /*foreach(NftOwner own in ownership)   
                   {
                     /* Debug.Log("Owner: " + own.ToJson());
@@ -234,7 +236,7 @@ public class CharacterSelector : MonoBehaviour
                       debugLabel.text = "Success!<br>".ToUpper() + "Select the image to play with the NFT".ToUpper();
                       Debug.Log("Already owns NFT.");
                       //When Enabled move onto next tokenID
-                      break;
+                      //break;
                     }
                     //debugLabel.text = "Success!<br>".ToUpper() + "Select the image to play with the NFT".ToUpper();
                     //Debug.Log("Already owns NFT.");
@@ -348,12 +350,15 @@ public class CharacterSelector : MonoBehaviour
             {
               case 1:
                 StaticClass.character = character1;
+                StaticClass.level = 1;
                 break;
               case 2:
                 StaticClass.character = character2;
-                break;
+                StaticClass.level = 2;
+              break;
               case 3:
                 StaticClass.character = character3;
+                StaticClass.level = 3;
               break;
             }
             characterPanel.SetActive(false);

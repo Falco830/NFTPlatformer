@@ -308,7 +308,7 @@ namespace NFT_Minter
             HexBigInteger gasPrice = new HexBigInteger(0);
 
             string resp = await Moralis.ExecuteContractFunction(contractAddress, contractAbi, contractFunction, pars, value, gas, gasPrice);
-
+        
             return resp;
         }
 
