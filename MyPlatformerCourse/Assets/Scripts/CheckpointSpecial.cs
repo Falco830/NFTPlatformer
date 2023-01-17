@@ -30,7 +30,7 @@ public class CheckpointSpecial : Checkpoint
     {
       if(ch == this)
       {
-        Debug.Log("Same Checkpoint");
+        //Same Checkpoint
       }
       else     
       {

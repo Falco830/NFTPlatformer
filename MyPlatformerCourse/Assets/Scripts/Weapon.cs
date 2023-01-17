@@ -10,7 +10,19 @@ public class Weapon : MonoBehaviour
     public float attackRange;
     public Sprite GFX;
 
-    private void Update()
+    public bool newWeapon;
+
+  private void Start()
+  {
+    if (newWeapon)
+    {
+      transform.rotation *= Quaternion.Euler(0, 0, -90);
+
+    }
+  }
+
+
+  private void Update()
     {
         transform.Rotate(Vector3.forward * turnSpeed * Time.deltaTime);
     }

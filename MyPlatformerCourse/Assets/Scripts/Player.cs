@@ -43,6 +43,7 @@ public class Player : MonoBehaviour
     public int damage;
 
     public SpriteRenderer weaponRenderer;
+    public SpriteRenderer NewWeaponRenderer;
 
     public GameObject blood;
     public GameObject deathEffect;
@@ -62,8 +63,6 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animator>();
         source = GetComponent<AudioSource>();
 
-        Debug.Log("Weapon " + StaticClass.weapon);
-
         if(StaticClass.weapon != null)
         {
             Weapon newWeapon = new Weapon();
@@ -72,11 +71,31 @@ public class Player : MonoBehaviour
             newWeapon.damage = StaticClass.damage;
             Equip(newWeapon);
         }
-
+    LevelUnocked();
         gameObject.transform.SetPositionAndRotation(FindObjectOfType<Checkpoints>().GetComponent<Checkpoints>().checkpoints[0].transform.position, new Quaternion(0, 0, 0, 0));
     }
-   
-    private void Update()
+  public void LevelUnocked()
+  {
+    if (StaticClass.level != 3)
+    {
+      switch (SceneManager.GetActiveScene().name)
+      {
+        case "Level1Custom":
+          StaticClass.level = 1;
+          break;
+        case "Level2Custom":
+          StaticClass.level = 2;
+          break;
+        case "Level3Custom":
+          StaticClass.level = 3;
+          break;
+        default:
+          StaticClass.level = 1;
+          break;
+      }
+    }
+  }
+  private void Update()
     {
 
         if (Time.time > nextAttackTime)
@@ -192,7 +211,7 @@ public class Player : MonoBehaviour
       {
       GameMaster gm = GameObject.FindObjectOfType<GameMaster>();
       gm.DestroyCharacter();
-        StartCoroutine(GameOver("CharacterSelect"));
+      StartCoroutine(GameOver("MainMenuSampleScene"));//"CharacterSelect"));
       }
 
       //GameObject newCharacter = Instantiate(respawnCharacter);
@@ -243,8 +262,17 @@ public class Player : MonoBehaviour
   public void Equip(Weapon weapon) {
       damage = weapon.damage;
       attackRange = weapon.attackRange;
+    if (weapon.newWeapon) {
+      NewWeaponRenderer.gameObject.SetActive(true);
+      NewWeaponRenderer.sprite = weapon.GFX;
+      weaponRenderer.sprite = null;
+    }
+    else
+    {
       weaponRenderer.sprite = weapon.GFX;
-      Instantiate(pickupEffect, transform.position, Quaternion.identity);
+      NewWeaponRenderer.gameObject.SetActive(false);
+    }
+      
     
     if (weapon.name != null)
     {
@@ -254,7 +282,6 @@ public class Player : MonoBehaviour
       StaticClass.GFX = weapon.GFX;
 
       Destroy(weapon.gameObject);
-      Debug.Log("Deleting Wep" + StaticClass.weapon);
     }
       
   }

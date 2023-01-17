@@ -19,9 +19,6 @@ public class GameMaster : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-
-    Debug.Log("Instance " + instance);
-    Debug.Log("StaticClass.character " + StaticClass.character);
     if (instance == null)
           {
             InstantiatePlayer();
@@ -40,16 +37,37 @@ public class GameMaster : MonoBehaviour
           {
             Destroy(gameObject);
           }
+    //LevelUlnocked();
     }
 
-    private void InstantiatePlayer()
+  public void ChangeShot(int shot, float positiony, float screeny)
+  {
+      cmvCam = FindObjectOfType<CinemachineVirtualCamera>().gameObject;
+      cmvCam.GetComponent<CinemachineVirtualCamera>().m_Lens.FieldOfView = shot;
+      cmvCam.GetComponent<CinemachineVirtualCamera>().transform.position.Set(0, positiony, 0);
+
+      cmvCam = FindObjectOfType<CinemachineFramingTransposer>().gameObject;
+      cmvCam.GetComponent<CinemachineFramingTransposer>().m_ScreenY = screeny;
+    //cmvCam.GetComponent<CinemachineVirtualCamera>().);
+  }
+    public void WideShot()
+  {
+    cmvCam.GetComponent<CinemachineVirtualCamera>().m_Lens.FieldOfView = 80;
+  }
+  public void NormalShot()
+  {
+    cmvCam.GetComponent<CinemachineVirtualCamera>().m_Lens.FieldOfView = 60;
+  }
+  public void CloseUpShot()
+  {
+    cmvCam.GetComponent<CinemachineVirtualCamera>().m_Lens.FieldOfView = 40;
+  }
+
+  private void InstantiatePlayer()
     {
-      Debug.Log("Instantiateing Player");
       if(StaticClass.character != null)
       {
         player = Instantiate(StaticClass.character);
-        
-      Debug.Log("Player " + StaticClass.weapon);
         if(StaticClass.GFX != null)
         {
         player.GetComponent<Player>().damage = StaticClass.damage;
@@ -71,6 +89,28 @@ public class GameMaster : MonoBehaviour
 
     }
 
+   /* public void LevelUnocked()
+    {
+      if(StaticClass.level != 3)
+      {
+        switch(SceneManager.GetActiveScene().ToString())
+          {
+            case "Level1Custom":
+              StaticClass.level = 1;
+            break;
+          case "Level2Custom":
+            StaticClass.level = 2;
+            break;
+          case "Level3Custom":
+            StaticClass.level = 3;
+            break;
+          default:
+            StaticClass.level = 1;
+            break;
+        }
+      }
+    }*/
+
     public void GameMasterWakeup()
     {
       Awake();
@@ -78,17 +118,16 @@ public class GameMaster : MonoBehaviour
 
     public void DestroyCharacter()
     {
-      StartCoroutine(DestroyPlayer("CharacterSelect"));
+      StartCoroutine(DestroyPlayer("MainMenuSampleScene"));//"CharacterSelect"));
     }
 
     IEnumerator DestroyPlayer(string sceneName)
     {
-    Destroy(player);
-    gameoverPanel = GameObject.Find("Canvas").transform.Find("GameOverPanel").gameObject;
-    gameoverPanel.SetActive(true);
-    yield return new WaitForSeconds(1f);   
-    SceneManager.LoadScene(sceneName);
-    Destroy(gameObject);
-      
+      Destroy(player);
+      gameoverPanel = GameObject.Find("Canvas").transform.Find("GameOverPanel").gameObject;
+      gameoverPanel.SetActive(true);
+      yield return new WaitForSeconds(1f);   
+      SceneManager.LoadScene(sceneName);
+      Destroy(gameObject);     
     }
 }

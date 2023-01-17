@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class BattleBegins : MonoBehaviour
 {
@@ -29,6 +30,9 @@ public class BattleBegins : MonoBehaviour
   public AudioSource finalHits;
 
 
+
+
+
   // Start is called before the first frame update
   void Start()
     {
@@ -39,7 +43,6 @@ public class BattleBegins : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
   private void OnTriggerEnter2D(Collider2D collision)
   {
@@ -84,7 +87,6 @@ public class BattleBegins : MonoBehaviour
   {
     GameObject player = GameObject.FindGameObjectWithTag("Player");
     headsAlive--;
-    Debug.Log("Heads: " + headsAlive);
 
     if(headsAlive == 1)
     {

@@ -2,6 +2,7 @@ using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GongController : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class GongController : MonoBehaviour
   float nextShotTime;
   public Transform shotPoint;
   public Transform player;
-
+  public Slider slider;
   public Transform target;
   // Start is called before the first frame update
   void Start()
@@ -70,7 +71,8 @@ public class GongController : MonoBehaviour
           Instantiate(fireBall, shotPoint.position, shotPoint.rotation);
           nextShotTime = Time.time + timeBetweenShots;
         }
-      }
+      slider.value = ((float) this.GetComponent<Enemy>().health / 300f);
+    }
 
 
     }

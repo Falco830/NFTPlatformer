@@ -58,24 +58,22 @@ public class Freezer : MonoBehaviour
     {
       if (preyOrEnemy)
       {
-        if (hitCollider.GetComponent<Prey>().isActiveAndEnabled)
+        if (FindObjectOfType<Prey>() ? hitCollider.GetComponent<Prey>().isActiveAndEnabled : false)
         {
           float distanceSqr = (this.gameObject.transform.position - hitCollider.transform.position).sqrMagnitude;
           if (smallestDistance > distanceSqr)
           {
-            Debug.Log("Distance" + smallestDistance);
             smallestDistance = distanceSqr;
             this.gameObject.GetComponent<AIDestinationSetter>().target = hitCollider.transform;
           }
         }
       }else
       {
-        if (hitCollider.GetComponent<Enemy>().isActiveAndEnabled)
+        if (FindObjectOfType<Enemy>() ? hitCollider.GetComponent<Enemy>().isActiveAndEnabled : false)
         {
           float distanceSqr = (this.gameObject.transform.position - hitCollider.transform.position).sqrMagnitude;
           if (smallestDistance > distanceSqr)
           {
-            Debug.Log("Distance" + smallestDistance);
             smallestDistance = distanceSqr;
             this.gameObject.GetComponent<AIDestinationSetter>().target = hitCollider.transform;
           }
@@ -93,7 +91,7 @@ public class Freezer : MonoBehaviour
     {
       collision.GetComponent<Prey>().TakeDamage(damage);
     }
-    else
+    if(collision.gameObject.layer == 9)
     {
       collision.GetComponent<Enemy>().TakeDamage(damage);
     }
@@ -103,7 +101,6 @@ public class Freezer : MonoBehaviour
   public void TakeDamage(int damage)
   {
     health -= damage;
-    Debug.Log("damage" + health);
     if (health <= 0)
     {
       //this.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;

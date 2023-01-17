@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,10 +12,14 @@ public class Heart : MonoBehaviour
     public Sprite fullHeart;
     public Sprite brokenHeart;
     Player player;
+    public int numberOfLives;
+    public TextMeshProUGUI lives;
+
 
     private void Start()
     {
         player = FindObjectOfType<Player>();
+        lives.text = player.lives.ToString();
     }
 
     private void Update()
@@ -41,6 +46,11 @@ public class Heart : MonoBehaviour
                 hearts[i].sprite = brokenHeart;
             }
 
+        }
+        if (player.lives < numberOfLives)
+        {
+          lives.text = player.lives.ToString();
+          numberOfLives--;
         }
     }
 

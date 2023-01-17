@@ -289,19 +289,22 @@ namespace NFT_Minter
             //BigInteger data = new BigInteger(0);
             byte[] data = Array.Empty<byte>();
 
-            // These are the parameters that the contract function expects
-            /*object[] parameters = {
-                _currentTokenId.ToString("x"), // This is the format the contract expects
-                tokenUrl
-            };*/
-
-            object[] pars = {
+      // These are the parameters that the contract function expects
+      /*object[] parameters = {
+          _currentTokenId.ToString("x"), // This is the format the contract expects
+          tokenUrl
+      };*/
+      object[] pars = {
+                toAddress,
+                ipfsMetadataPath
+            };
+            /*object[] pars = {
                                 toAddress,
                                 tokenId.ToString("x"),
                                 amt.ToString("x"),
                                 ipfsMetadataPath,
                                 data
-                            };
+                            };*/
       // Set gas configuration. If you set it at 0, your wallet will use its default gas configuration
       HexBigInteger value = new HexBigInteger(UnitConversion.Convert.ToWei(0.05, 18));
             HexBigInteger gas = new HexBigInteger(0);

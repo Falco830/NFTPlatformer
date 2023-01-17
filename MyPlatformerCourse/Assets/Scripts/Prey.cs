@@ -26,7 +26,7 @@ public class Prey : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (FindObjectOfType<Enemy>() != null )
+        if (FindObjectOfType<Enemy>() != null || FindObjectOfType<Freezer>() != null)
         {
 
           Collider2D[] hitColliders = Physics2D.OverlapCircleAll(this.gameObject.transform.position, preyRadius);
@@ -89,7 +89,6 @@ public class Prey : MonoBehaviour
  
         float distanceSqr = Mathf.Sqrt((this.gameObject.transform.position - hitCollider.transform.position).sqrMagnitude);
 
-        Debug.Log("ENEMY" + distanceSqr);
         if (smallestDistance > distanceSqr)
         {
           smallestDistance = distanceSqr;
@@ -128,7 +127,6 @@ public void shouldFlee(Vector3 hitCollider)
     Seeker seek = this.gameObject.GetComponent<Seeker>();
     MultiTargetPath mt = seek.StartMultiTargetPath(this.gameObject.transform.position, hitColliders, false);
     mt.BlockUntilCalculated();
-    Debug.Log("Target: " + mt.chosenTarget + " enemie " + enemies.Length);
     FleePath fp = FleePath.Construct(this.gameObject.transform.position, hitColliders[mt.chosenTarget], 3000);
     fp.aimStrength = 1;
     fp.spread = 4000;
@@ -141,7 +139,6 @@ public void shouldFlee(Vector3 hitCollider)
   public void TakeDamage(int damage)
   {
     health -= damage;
-    Debug.Log("damage" + health);
     if (health <= 0)
     {
       //this.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;

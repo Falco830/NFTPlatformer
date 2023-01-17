@@ -14,15 +14,6 @@ public class UnlockLevel : MonoBehaviour
     {
         button = GetComponent<Button>();
 
-    /*if (PlayerPrefs.GetInt(sceneName, 0) == 1) {
-        button.interactable = true;
-        chains.SetActive(false);
-    }*/
-        
-        //if (SceneManager.LoadSceneAsync)
-        Debug.Log(SceneManager.sceneCountInBuildSettings);
-        Debug.Log(SceneManager.GetSceneByName(sceneName).buildIndex);
-
         switch (sceneName)
         {
           case "Level2Custom":

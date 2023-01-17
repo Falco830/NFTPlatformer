@@ -10,7 +10,6 @@ public class Menu : MonoBehaviour
   [SerializeField] private GameObject character1;
   public void LoadScene(string sceneName) {
         StaticClass.character = character1;
-        Debug.Log(StaticClass.character);
         StartCoroutine(FadeIn(sceneName));
 
     }

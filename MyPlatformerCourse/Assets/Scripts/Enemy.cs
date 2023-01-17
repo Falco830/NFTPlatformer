@@ -85,7 +85,10 @@ public class Enemy : MonoBehaviour
         {
           if (this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Prey>() != null)
           {
-            this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Prey>().transform;
+            //this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Prey>().transform;
+            IAstarAI ai;
+            ai = GetComponent<IAstarAI>();
+            ai.destination = FindObjectOfType<Prey>().transform.position;
             smallestDistance = preyRadius;
             GetClosestInRadius();
 
@@ -93,7 +96,10 @@ public class Enemy : MonoBehaviour
           else if (this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Player>() != null)
           {
 
-            this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Player>().transform;
+            //this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Player>().transform;
+            IAstarAI ai;
+            ai = GetComponent<IAstarAI>();
+            ai.destination = FindObjectOfType<Player>().transform.position;
           }
           else
           {
@@ -101,13 +107,15 @@ public class Enemy : MonoBehaviour
             preyState = 0;
           }
 
-
         }
 
       }
       if (this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Prey>() != null)
       {
-        this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Prey>().transform;
+        //this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Prey>().transform;
+        IAstarAI ai;
+        ai = GetComponent<IAstarAI>();
+        ai.destination = FindObjectOfType<Prey>().transform.position;
         smallestDistance = preyRadius;
         GetClosestInRadius();
 
@@ -115,7 +123,11 @@ public class Enemy : MonoBehaviour
       else if (this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Player>() != null)
       {
 
-        this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Player>().transform;
+        //this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Player>().transform;
+        IAstarAI ai;
+        ai = GetComponent<IAstarAI>();
+        ai.destination = FindObjectOfType<Player>().transform.position;
+        smallestDistance = preyRadius;
       }
       else
       {
@@ -163,7 +175,6 @@ public class Enemy : MonoBehaviour
 
         float distanceSqr = Mathf.Sqrt((this.gameObject.transform.position - hitCollider.transform.position).sqrMagnitude);
 
-        Debug.Log("ENEMY" + distanceSqr);
         if (smallestDistance > distanceSqr)
         {
           smallestDistance = distanceSqr;
@@ -202,7 +213,6 @@ public class Enemy : MonoBehaviour
     Seeker seek = this.gameObject.GetComponent<Seeker>();
     MultiTargetPath mt = seek.StartMultiTargetPath(this.gameObject.transform.position, hitColliders, false);
     mt.BlockUntilCalculated();
-    Debug.Log("Target: " + mt.chosenTarget + " freezie " + freezies.Length);
     FleePath fp = FleePath.Construct(this.gameObject.transform.position, hitColliders[mt.chosenTarget], 3000);
     fp.aimStrength = 1;
     fp.spread = 4000;
@@ -221,12 +231,13 @@ public class Enemy : MonoBehaviour
       {
 
         float distanceSqr = (this.gameObject.transform.position - hitCollider.transform.position).sqrMagnitude;
-        Debug.Log("ENEMY" + distanceSqr);
         if (smallestDistance > distanceSqr)
         {
-          Debug.Log("Distance" + smallestDistance);
           smallestDistance = distanceSqr;
-          this.gameObject.GetComponent<AIDestinationSetter>().target = hitCollider.transform;
+          IAstarAI ai;
+          ai = GetComponent<IAstarAI>();
+          ai.destination = hitCollider.transform.position;
+          smallestDistance = preyRadius;
         }
       }
     }
@@ -245,10 +256,8 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int damage) {
         health -= damage;
-        Debug.Log("damage" + health);
         if (health <= 0)
         {
-            //this.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
             Instantiate(deathEffect, transform.position, Quaternion.identity);
             Destroy(gameObject);
         } else {
