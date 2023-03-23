@@ -16,14 +16,14 @@ public class UnlockLevel : MonoBehaviour
 
         switch (sceneName)
         {
-          case "Level2Custom":
+          case "Level2Pro":
             if (StaticClass.level >= 2)
             {
               button.interactable = true;
               chains.SetActive(false);
             }          
             break;
-          case "Level3Custom":
+          case "Level3Pro":
             if (StaticClass.level >= 3)
             {
               button.interactable = true;

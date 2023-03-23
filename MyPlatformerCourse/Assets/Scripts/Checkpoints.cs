@@ -16,13 +16,16 @@ public class Checkpoints : MonoBehaviour
     {
       foreach (Checkpoint checkPoint in checkpoints)
       {
-        if (checkPoint.isActive)
+        if (checkPoint)
         {
-          checkPoint.gameObject.GetComponent<SpriteRenderer>().color = Color.yellow;
-        }
-        else
-        {
-          checkPoint.gameObject.GetComponent<SpriteRenderer>().color = Color.blue;
+          if (checkPoint.isActive)
+          {
+            checkPoint.gameObject.GetComponent<SpriteRenderer>().color = Color.yellow;
+          }
+          else
+          {
+            checkPoint.gameObject.GetComponent<SpriteRenderer>().color = Color.blue;
+          }
         }
       }
     }
@@ -31,8 +34,11 @@ public class Checkpoints : MonoBehaviour
     {
       foreach (Checkpoint checkPoint in checkpoints)
       {
-        checkPoint.isActive = false;
-        checkPoint.gameObject.GetComponent<SpriteRenderer>().color = Color.yellow;
+        if (checkPoint)
+        {
+          checkPoint.isActive = false;
+          checkPoint.gameObject.GetComponent<SpriteRenderer>().color = Color.yellow;
+        }
       }
     }
 }

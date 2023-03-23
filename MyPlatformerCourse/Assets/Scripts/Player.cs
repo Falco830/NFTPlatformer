@@ -53,6 +53,7 @@ public class Player : MonoBehaviour
 
     AudioSource source;
 
+    Timer timer;
     public AudioClip jumpSound;
 
     public Checkpoint checkPoint;
@@ -62,38 +63,54 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         source = GetComponent<AudioSource>();
+        timer = FindObjectOfType<Timer>();
 
-        if(StaticClass.weapon != null)
+        if (StaticClass.weapon != null)
         {
             Weapon newWeapon = new Weapon();
             newWeapon.GFX = StaticClass.GFX;
             newWeapon.attackRange = StaticClass.attackRange;
             newWeapon.damage = StaticClass.damage;
             Equip(newWeapon);
+
         }
-    LevelUnocked();
+        LevelUnocked();
+      if (FindObjectOfType<Checkpoints>())
+      {
         gameObject.transform.SetPositionAndRotation(FindObjectOfType<Checkpoints>().GetComponent<Checkpoints>().checkpoints[0].transform.position, new Quaternion(0, 0, 0, 0));
-    }
+      }
+  }
   public void LevelUnocked()
   {
-    if (StaticClass.level != 3)
-    {
       switch (SceneManager.GetActiveScene().name)
       {
-        case "Level1Custom":
+        case "Level1Pro":
           StaticClass.level = 1;
+          timer.GetComponent<Timer>().StartStopwatch();
           break;
-        case "Level2Custom":
+        case "Level2Pro":
           StaticClass.level = 2;
+        timer.GetComponent<Timer>().StartStopwatch();
           break;
-        case "Level3Custom":
+        case "Level3Pro":
           StaticClass.level = 3;
+        timer.GetComponent<Timer>().StartStopwatch();
+          break;
+        case "VictoryScenePro":
+          StaticClass.level = 3;
+        timer.GetComponent<Timer>().gameWon = true;
+        timer.GetComponent<Timer>().StopStopwatch();
+          break;
+        case "MainMenuSampleScene":
+        case "LevelSelection":
+        timer.GetComponent<Timer>().StopStopwatch();
+        timer.GetComponent<Timer>().gameWon = false;
+
           break;
         default:
           StaticClass.level = 1;
           break;
       }
-    }
   }
   private void Update()
     {
@@ -102,13 +119,25 @@ public class Player : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.Space))
             {
-                
                 anim.SetTrigger("attack");
                 nextAttackTime = Time.time + timeBetweenAttacks;
             }
         }
+        if(speed <= 0 && jumpForce <= 0)
+        {
+          speed = 10;
+          jumpForce = 35;
+          StaticClass.speed = speed;
+          StaticClass.jumpForce = jumpForce;
+        }
+        if (!checkPoint)
+        {
+          if (FindObjectOfType<Checkpoints>())
+          {
+            checkPoint = FindObjectOfType<Checkpoints>().GetComponent<Checkpoints>().checkpoints[FindObjectOfType<Checkpoints>().GetComponent<Checkpoints>().checkpoints.Length - 1];
 
-
+          }
+        }
         float input = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(input * speed, rb.velocity.y);
 
@@ -124,7 +153,7 @@ public class Player : MonoBehaviour
             anim.SetBool("isRunning", true);
         } else {
             anim.SetBool("isRunning", false);
-        }
+          }
 
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
         isTouchingFront = Physics2D.OverlapCircle(frontCheck.position, checkRadius, whatIsGround);
@@ -136,7 +165,7 @@ public class Player : MonoBehaviour
             anim.SetBool("isJumping", true);
         }
 
-        if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded == true)
+        if ((Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W)) && isGrounded == true)
         {
             rb.velocity = Vector2.up * jumpForce;
             source.clip = jumpSound;
@@ -156,7 +185,7 @@ public class Player : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlidingSpeed, float.MaxValue));
         }
 
-        if (Input.GetKeyDown(KeyCode.UpArrow) && wallSliding)
+        if ((Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W)) && wallSliding)
         {
             wallJumping = true;
             Invoke("SetWallJumpingToFalse", wallJumpTime);
@@ -170,14 +199,14 @@ public class Player : MonoBehaviour
         }
         if(this.transform.position.y < -100)
         {
-
             //gameObject.transform.position.Set(32, 5,0);
             TakeDamage(1);
-            gameObject.transform.SetPositionAndRotation(checkPoint.transform.position, new Quaternion(0,0,0,0));
-            //Destroy(gameObject);
+            if(gameObject && checkPoint)
+            {
+              gameObject.transform.SetPositionAndRotation(checkPoint.transform.position, new Quaternion(0, 0, 0, 0));
+              //Destroy(gameObject);
+            }
         }
-
-
     }
 
     void Flip() {
@@ -194,7 +223,21 @@ public class Player : MonoBehaviour
       if(lives > 0)
       {
         lives--;
+        StaticClass.lives = lives;
+        StaticClass.health = 6;
+
+      if (!gameObject.GetComponent<Player>().checkPoint)
+      {
+        if (FindObjectOfType<Checkpoints>())
+        {
+          gameObject.GetComponent<Player>().checkPoint = FindObjectOfType<Checkpoints>().GetComponent<Checkpoints>().checkpoints[FindObjectOfType<Checkpoints>().GetComponent<Checkpoints>().checkpoints.Length - 1];
+          gameObject.transform.position = gameObject.GetComponent<Player>().checkPoint.transform.position;
+        }
+      }
+      else
+      {
         gameObject.transform.position = gameObject.GetComponent<Player>().checkPoint.transform.position;
+      }
         gameObject.GetComponent<Player>().health = fullHealth;
         //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         /*GameObject respawnCharacter = gameObject;
@@ -220,17 +263,24 @@ public class Player : MonoBehaviour
 
   IEnumerator GameOver(string sceneName)
   {
-    gameoverPanel = GameObject.Find("Canvas").transform.Find("GameOverPanel").gameObject;
-    gameoverPanel.SetActive(true);    
+    if (GameObject.Find("CanvasMaster"))
+    {
+      gameoverPanel = GameObject.Find("CanvasMaster").transform.Find("GameOverPanel").gameObject;
+      gameoverPanel.SetActive(true);
+    }
     yield return new WaitForSeconds(1f);
     Destroy(gameObject);
     SceneManager.LoadScene(sceneName);
   }
   public void TakeDamage(int damage) {
+    if (FindObjectOfType<CameraShake>())
+    {
       FindObjectOfType<CameraShake>().Shake();
+    }
       health -= damage;
-      print(health);
-      if (health <= 0)
+    StaticClass.health = health;
+    //print(health);
+    if (health <= 0)
       {
           Instantiate(deathEffect, transform.position, Quaternion.identity);
           //Destroy(gameObject);
@@ -239,6 +289,12 @@ public class Player : MonoBehaviour
       } else {
           Instantiate(blood, transform.position, Quaternion.identity);
       }
+  }
+  public void KnockBack(float knockBack, float knockUp)
+  {
+    //this.gameObject.GetComponent<Rigidbody2D>().AddForceAtPosition(new Vector2(knockBack, knockUp), this.gameObject.transform.position);
+    rb.velocity = new Vector2(knockBack, knockUp);
+    //rb.AddRelativeForce(new Vector2(knockBack, knockUp));
   }
 
   public void Attack() {
@@ -257,6 +313,20 @@ public class Player : MonoBehaviour
   {
       Gizmos.color = Color.red;
       Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+  }
+
+  public void HealthUp()
+  {
+    health += 1;
+    StaticClass.health = health;
+  }
+
+  public void SpeedBoost()
+  {
+    speed += 5;
+    jumpForce += 5;
+    StaticClass.speed = speed;
+    StaticClass.jumpForce = jumpForce;
   }
 
   public void Equip(Weapon weapon) {
@@ -280,6 +350,8 @@ public class Player : MonoBehaviour
       StaticClass.damage = weapon.damage;
       StaticClass.attackRange = weapon.attackRange;
       StaticClass.GFX = weapon.GFX;
+      StaticClass.weapon = weapon;
+      StaticClass.newWeapon = weapon.newWeapon;
 
       Destroy(weapon.gameObject);
     }

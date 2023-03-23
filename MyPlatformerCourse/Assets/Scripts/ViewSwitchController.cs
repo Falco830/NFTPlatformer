@@ -18,6 +18,7 @@ public class ViewSwitchController : MonoBehaviour
   [SerializeField]
   private GameObject mintNFTObject;
 
+  [SerializeField]
   private AuthenticationKit authKit;
   // Start is called before the first frame update
   void Start()

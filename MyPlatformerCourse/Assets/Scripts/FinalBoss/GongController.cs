@@ -9,7 +9,7 @@ public class GongController : MonoBehaviour
 
   public Transform[] patrolPoints;
   public float speed;
-  int currentPointIndex;
+  public int currentPointIndex;
 
   float waitTime;
   public float startWaitTime;
@@ -29,6 +29,8 @@ public class GongController : MonoBehaviour
   public Transform player;
   public Slider slider;
   public Transform target;
+
+  public GameObject Fist;
   // Start is called before the first frame update
   void Start()
     {
@@ -45,11 +47,11 @@ public class GongController : MonoBehaviour
         //gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(-30, 30);
         gameObject.layer = 9;
         transform.position = Vector2.MoveTowards(transform.position, patrolPoints[currentPointIndex].position, speed * Time.deltaTime);
-        if (transform.position == patrolPoints[currentPointIndex].position)
+        if ((Vector3.Distance(transform.position, patrolPoints[currentPointIndex].position)) <= 5)
         {
           if (waitTime <= 0)
           {
-            if (currentPointIndex + 1 < patrolPoints.Length)
+            if (currentPointIndex < patrolPoints.Length - 1)
             {
               currentPointIndex++;
             }
@@ -87,6 +89,7 @@ public class GongController : MonoBehaviour
       if (!asleep)
       {
         gameObject.GetComponent<SpriteRenderer>().color = Color.green;
+        Fist.GetComponentInChildren<GretasFist>().onGreta = true;
       }
       else if (!wakingUp)
       {
@@ -106,6 +109,7 @@ public class GongController : MonoBehaviour
   {
     if (collision.collider.tag.Equals("Player"))
     {
+      Fist.GetComponentInChildren<GretasFist>().onGreta = false;
       gameObject.GetComponent<AudioSource>().Stop();
     }
   }
@@ -123,6 +127,7 @@ public class GongController : MonoBehaviour
     if (collision.tag == "Player")
     {
       collision.transform.parent = null;
+      Fist.GetComponentInChildren<GretasFist>().onGreta = false;
     }
   }
 

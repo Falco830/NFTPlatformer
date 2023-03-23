@@ -67,6 +67,7 @@ public class GretaController : MonoBehaviour
         if (!asleep)
         {
           gameObject.GetComponent<SpriteRenderer>().color = Color.green;
+          gameObject.GetComponentInChildren<GretasFist>().onGreta = true;
         }
          else if (!wakingUp)
         {

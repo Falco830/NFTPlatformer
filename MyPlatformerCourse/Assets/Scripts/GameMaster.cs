@@ -19,27 +19,110 @@ public class GameMaster : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+    SceneManager.sceneLoaded += this.OnLoadCallback;
     if (instance == null)
-          {
-            InstantiatePlayer();
-            instance = this;
-            DontDestroyOnLoad(instance);
-          }
-          else if (StaticClass.character != null)
-            {
-            player = StaticClass.character;
-            cmvCam = GameObject.Find("CM vcam1");
-            InstantiatePlayer();
-            instance = this;
-            DontDestroyOnLoad(instance);
-          }
-          else
-          {
-            Destroy(gameObject);
-          }
-    //LevelUlnocked();
+    {
+      cmvCam = GameObject.Find("CM vcam1");
+      InstantiatePlayer();
+      instance = this;
+      //DontDestroyOnLoad(instance);
+    }
+    else if (player == null && StaticClass.character != null)
+    {
+      cmvCam = GameObject.Find("CM vcam1");
+      InstantiatePlayer();
+      //player = StaticClass.character;
+      FindObjectOfType<BattleBegins>().intro1.Stop();
+      FindObjectOfType<BattleBegins>().intro2.Stop();
+      FindObjectOfType<BattleBegins>().intro3.Stop();
+      FindObjectOfType<BattleBegins>().endingTheme.Stop();
+      FindObjectOfType<BattleBegins>().battle1.Stop();
+      FindObjectOfType<BattleBegins>().battle2.Stop();
+      FindObjectOfType<BattleBegins>().finalHits.Stop();
+      FindObjectOfType<BattleBegins>().victoryTheme.Stop();
+      FindObjectOfType<BattleBegins>().enabled = false;
+      FindObjectOfType<BattleBegins>().GetComponent<BoxCollider2D>().enabled = false;
+      instance = this;
+      //DontDestroyOnLoad(instance);
+    }
+    /*else if (SceneManager.GetActiveScene().IsValid())
+    {
+      FindObjectOfType<BattleBegins>().intro.Stop();
+      FindObjectOfType<BattleBegins>().battle.Stop();
+      FindObjectOfType<BattleBegins>().finalHits.Stop();
+      FindObjectOfType<BattleBegins>().victoryTheme.Stop();
+      FindObjectOfType<BattleBegins>().enabled = false;
+      FindObjectOfType<BattleBegins>().GetComponent<BoxCollider2D>().enabled = false;
+      InstantiatePlayer();
+      instance = this;
+      DontDestroyOnLoad(instance);
+    }*/
+    else
+    {
+      //Destroy(gameObject);
     }
 
+    
+    LevelUnocked();
+  }
+  void OnLoadCallback(Scene scene, LoadSceneMode sceneMode)
+  {
+    if(SceneManager.GetActiveScene().name != "MainMenuSampleScene" && SceneManager.GetActiveScene().name != "LevelSelection")
+    {
+      if (!FindObjectOfType<Player>())
+      {
+        if (instance == null)
+        {
+          InstantiatePlayer();
+          instance = this;
+          //DontDestroyOnLoad(instance);
+        }
+        else if (player == null && StaticClass.character != null)
+        {
+          cmvCam = GameObject.Find("CM vcam1");
+          InstantiatePlayer();
+          //player = StaticClass.character;
+          FindObjectOfType<BattleBegins>().intro1.Stop();
+          FindObjectOfType<BattleBegins>().intro2.Stop();
+          FindObjectOfType<BattleBegins>().intro3.Stop();
+          FindObjectOfType<BattleBegins>().endingTheme.Stop();
+          FindObjectOfType<BattleBegins>().battle1.Stop();
+          FindObjectOfType<BattleBegins>().battle2.Stop();
+          FindObjectOfType<BattleBegins>().finalHits.Stop();
+          FindObjectOfType<BattleBegins>().victoryTheme.Stop();
+          FindObjectOfType<BattleBegins>().enabled = false;
+          //FindObjectOfType<BattleBegins>().GetComponent<BoxCollider2D>().enabled = false;
+
+          instance = this;
+          //DontDestroyOnLoad(instance);
+        }
+        /*else if (SceneManager.GetActiveScene().IsValid())
+        {
+          FindObjectOfType<BattleBegins>().intro.Stop();
+          FindObjectOfType<BattleBegins>().battle.Stop();
+          FindObjectOfType<BattleBegins>().finalHits.Stop();
+          FindObjectOfType<BattleBegins>().victoryTheme.Stop();
+          FindObjectOfType<BattleBegins>().enabled = false;
+          FindObjectOfType<BattleBegins>().GetComponent<BoxCollider2D>().enabled = false;
+          InstantiatePlayer();
+          instance = this;
+          DontDestroyOnLoad(instance);
+        }*/
+        else
+        {
+          Destroy(gameObject);
+         
+        }
+        LevelUnocked();
+      }
+
+    }
+    else
+    {
+      Destroy(gameObject);
+    }
+
+  }
   public void ChangeShot(int shot, float positiony, float screeny)
   {
       cmvCam = FindObjectOfType<CinemachineVirtualCamera>().gameObject;
@@ -67,41 +150,73 @@ public class GameMaster : MonoBehaviour
     {
       if(StaticClass.character != null)
       {
+        
         player = Instantiate(StaticClass.character);
         if(StaticClass.GFX != null)
         {
         player.GetComponent<Player>().damage = StaticClass.damage;
         player.GetComponent<Player>().attackRange = StaticClass.attackRange;
-        player.GetComponent<Player>().weaponRenderer.sprite = StaticClass.GFX;
+        player.GetComponent<Player>().speed = StaticClass.speed;
+        player.GetComponent<Player>().jumpForce = StaticClass.jumpForce;
+        if (StaticClass.health <= 0 && StaticClass.lives <= 0)
+        {
+          StaticClass.health = 6;
+          StaticClass.lives = 3;
+        }
+        player.GetComponent<Player>().health = StaticClass.health;
+        player.GetComponent<Player>().lives = StaticClass.lives;
 
+        if (StaticClass.newWeapon)
+        {
+          player.GetComponent<Player>().NewWeaponRenderer.sprite = StaticClass.GFX;
+          player.GetComponent<Player>().NewWeaponRenderer.gameObject.SetActive(true);
+          player.GetComponent<Player>().weaponRenderer.sprite = null;
+        }
+        else
+        {
+          player.GetComponent<Player>().weaponRenderer.sprite = StaticClass.GFX;
+          player.GetComponent<Player>().NewWeaponRenderer.gameObject.SetActive(false);
         }
         
-          
-        cmvCam.GetComponent<CinemachineVirtualCamera>().Follow = player.transform;
-        cmvCam.GetComponent<CinemachineVirtualCamera>().LookAt = player.transform;
+
+        }
+
+        if (cmvCam)
+        {
+          cmvCam.GetComponent<CinemachineVirtualCamera>().Follow = player.transform;
+          cmvCam.GetComponent<CinemachineVirtualCamera>().LookAt = player.transform;
+        }
+
       }
       else
       {
+        if (StaticClass.health <= 0 && StaticClass.lives <= 0)
+        {
+          StaticClass.health = 6;
+          StaticClass.lives = 3;
+        }
         player = Instantiate(player);
+
         cmvCam.GetComponent<CinemachineVirtualCamera>().Follow = player.transform;
         cmvCam.GetComponent<CinemachineVirtualCamera>().LookAt = player.transform;
       }
 
     }
 
-   /* public void LevelUnocked()
+    public void LevelUnocked()
     {
       if(StaticClass.level != 3)
       {
+        
         switch(SceneManager.GetActiveScene().ToString())
           {
-            case "Level1Custom":
+            case "Level1Pro":
               StaticClass.level = 1;
             break;
-          case "Level2Custom":
+          case "Level2Pro":
             StaticClass.level = 2;
             break;
-          case "Level3Custom":
+          case "Level3Pro":
             StaticClass.level = 3;
             break;
           default:
@@ -109,7 +224,7 @@ public class GameMaster : MonoBehaviour
             break;
         }
       }
-    }*/
+    }
 
     public void GameMasterWakeup()
     {
@@ -121,13 +236,23 @@ public class GameMaster : MonoBehaviour
       StartCoroutine(DestroyPlayer("MainMenuSampleScene"));//"CharacterSelect"));
     }
 
-    IEnumerator DestroyPlayer(string sceneName)
+  private void OnDestroy()
+  {
+    SceneManager.sceneLoaded -= this.OnLoadCallback;
+  }
+  IEnumerator DestroyPlayer(string sceneName)
     {
       Destroy(player);
-      gameoverPanel = GameObject.Find("Canvas").transform.Find("GameOverPanel").gameObject;
-      gameoverPanel.SetActive(true);
-      yield return new WaitForSeconds(1f);   
-      SceneManager.LoadScene(sceneName);
-      Destroy(gameObject);     
+      if (GameObject.Find("CanvasMaster"))
+      {
+        gameoverPanel = GameObject.Find("CanvasMaster").transform.Find("GameOverPanel").gameObject;
+        gameoverPanel.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene(sceneName);
+        Destroy(gameObject);
+      }
+
+
+
     }
 }

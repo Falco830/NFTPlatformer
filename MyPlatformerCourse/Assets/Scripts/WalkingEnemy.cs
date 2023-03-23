@@ -33,6 +33,10 @@ public class WalkingEnemy : Enemy
 
   [SerializeField]
   float attackRange;
+  [SerializeField]
+  float knockBack = 0;
+  [SerializeField]
+  float knockUp = 0;
 
   [SerializeField]
   float timeBetweenAttacks;
@@ -102,9 +106,10 @@ public class WalkingEnemy : Enemy
 
       if (CanSeePlayer(agroRange, "Player"))
       {
+        gm.ChangeShot(shotsize, positiony, screeny);
         //agro enemy
         isAgro = true;
-      //ChasePlayer();
+        //ChasePlayer();
         if (CanSeePlayer(attackRange, "Player"))
         {
           isAttacking = true;
@@ -113,16 +118,17 @@ public class WalkingEnemy : Enemy
         {
           isAttacking = false;
         }
-    }
+      }
       else
       {
         if (isAgro)
         {
-           if (!isSearching)
-            {
-              isSearching = true;
-              Invoke("StopChasingPlayer", 5);
-            }
+          if (!isSearching)
+          {
+            isSearching = true;
+            gm.ChangeShot(softsize, positiony, screeny);
+            Invoke("StopChasingPlayer", 5);
+          }
           if (CanSeePlayer(attackRange, "Player"))
           {
             isAttacking = true;
@@ -188,7 +194,7 @@ public class WalkingEnemy : Enemy
 
     }
     else
-    {     
+    {
       if (canSeeEnemy)
       {
         transform.rotation = patrolPoints[currentPointIndex].rotation;
@@ -224,10 +230,10 @@ public class WalkingEnemy : Enemy
 
     void ChasePlayer()
     {
-      gm.ChangeShot(shotsize, positiony, screeny);
-      if(transform.position.x < FindObjectOfType<Player>().transform.position.x)
+    if (FindObjectOfType<Player>()) {
+      if (transform.position.x < FindObjectOfType<Player>().transform.position.x)
       {
-        transform.rotation = Quaternion.Euler(0,0,0);
+        transform.rotation = Quaternion.Euler(0, 0, 0);
         rb2d.velocity = new Vector2(moveSpeed, 0);
         transform.localScale = new Vector2(size, size);
 
@@ -235,12 +241,14 @@ public class WalkingEnemy : Enemy
       }
       else
       {
-        transform.rotation = Quaternion.Euler(0,180,0);
+        transform.rotation = Quaternion.Euler(0, 180, 0);
         rb2d.velocity = new Vector2(-moveSpeed, 0);
         transform.localScale = new Vector2(size, size);
         isFacingLeft = true;
       }
-    Character.SetState(CharacterState.Run);
+      Character.SetState(CharacterState.Run);
+    }
+      
   }
 
   private void OnAnimationEvent(string eventName)
@@ -262,7 +270,11 @@ public class WalkingEnemy : Enemy
       foreach (Collider2D col in playersToDamage)
       {
         col.GetComponent<Player>().TakeDamage(damage);
-      }
+        if(knockBack != 0 || knockUp != 0)
+          {
+            col.GetComponent<Player>().KnockBack(isFacingLeft ? -knockBack : knockBack, knockUp);
+          }
+        }
     }
     void StopAttacking()
     {
@@ -316,7 +328,6 @@ public class WalkingEnemy : Enemy
 
     void StopChasingPlayer()
     {
-      gm.ChangeShot(softsize, positiony, screeny);
       Character.SetState(CharacterState.Idle);
       isAgro = false;
       isSearching = false;

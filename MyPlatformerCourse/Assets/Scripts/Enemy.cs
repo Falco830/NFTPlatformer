@@ -26,115 +26,121 @@ public class Enemy : MonoBehaviour
   }
   private void Update()
   {
-    if (!SceneManager.GetActiveScene().name.Equals("Level3Custom"))
-    {
-      if (FindObjectOfType<Freezer>() != null)
-      {
+     if (!SceneManager.GetActiveScene().name.Equals("Level3Pro"))
+     {
+       if (FindObjectOfType<Freezer>() != null)
+       {
 
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(this.gameObject.transform.position, preyRadius);        
-        Collider2D[] blitzColliders = Physics2D.OverlapCircleAll(this.gameObject.transform.position, blitzRadius);
+         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(this.gameObject.transform.position, preyRadius);        
+         Collider2D[] blitzColliders = Physics2D.OverlapCircleAll(this.gameObject.transform.position, blitzRadius);
 
-        
-        int hitPreyIndexor = 0;
-        foreach (Collider2D ht in hitColliders)
+
+         int hitPreyIndexor = 0;
+         foreach (Collider2D ht in hitColliders)
+         {
+           if (ht.TryGetComponent<Prey>(out var htp))
+           {
+             hitPreyIndexor++;
+           }
+         }
+         Collider2D[] hitPreyColliders = new Collider2D[hitPreyIndexor];
+         hitPreyIndexor = 0;
+         foreach (Collider2D ht in hitColliders)
+         {
+           if (ht.TryGetComponent<Prey>(out var htp))
+           {
+             hitPreyColliders[hitPreyIndexor++] = ht;
+           }
+         }
+
+         int hitBlitzIndexor = 0;
+         foreach (Collider2D ht in blitzColliders)
+         {
+           if (ht.TryGetComponent<Prey>(out var htp))
+           {
+             hitBlitzIndexor++;
+           }
+         }
+         Collider2D[] hitBlitzColliders = new Collider2D[hitBlitzIndexor];
+         hitBlitzIndexor = 0;
+         foreach (Collider2D ht in blitzColliders)
+         {
+           if (ht.TryGetComponent<Prey>(out var htp))
+           {
+             hitBlitzColliders[hitBlitzIndexor++] = ht;
+           }
+         }
+
+         if (hitBlitzColliders.Length != 0 && ai.destination != null)
+         {
+           GetClosestInRadius(hitBlitzColliders);
+           preyState = 1;
+         }
+         else if (hitPreyColliders.Length != 0 && ai.destination != null)
+         {
+           GetClosestInRadius(hitPreyColliders);
+           preyState = 2;
+         }
+         else
+         {
+           if (this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Prey>() != null)
+           {
+             //this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Prey>().transform;
+             IAstarAI ai;
+             ai = GetComponent<IAstarAI>();
+             ai.destination = FindObjectOfType<Prey>().transform.position;
+             smallestDistance = preyRadius;
+             GetClosestInRadius();
+
+           }
+           else if (this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Player>() != null)
+           {
+
+             //this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Player>().transform;
+             IAstarAI ai;
+             ai = GetComponent<IAstarAI>();
+             ai.destination = FindObjectOfType<Player>().transform.position;
+           }
+           else
+           {
+             wander();
+             preyState = 0;
+           }
+
+         }
+
+       }
+       if (this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Prey>() != null)
+       {
+         //this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Prey>().transform;
+         IAstarAI ai;
+         ai = GetComponent<IAstarAI>();
+        if (FindObjectOfType<Prey>() && ai != null)
         {
-          if (ht.TryGetComponent<Prey>(out var htp))
-          {
-            hitPreyIndexor++;
-          }
+          ai.destination = FindObjectOfType<Prey>().transform.position;
         }
-        Collider2D[] hitPreyColliders = new Collider2D[hitPreyIndexor];
-        hitPreyIndexor = 0;
-        foreach (Collider2D ht in hitColliders)
+         smallestDistance = preyRadius;
+         GetClosestInRadius();
+
+       }
+       else if (this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Player>() != null)
+       {
+
+         //this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Player>().transform;
+         IAstarAI ai;
+         ai = GetComponent<AIPath>();
+        if (FindObjectOfType<Prey>() && ai != null)
         {
-          if (ht.TryGetComponent<Prey>(out var htp))
-          {
-            hitPreyColliders[hitPreyIndexor++] = ht;
-          }
+          ai.destination = FindObjectOfType<Player>().transform.position;
         }
-
-        int hitBlitzIndexor = 0;
-        foreach (Collider2D ht in blitzColliders)
-        {
-          if (ht.TryGetComponent<Prey>(out var htp))
-          {
-            hitBlitzIndexor++;
-          }
-        }
-        Collider2D[] hitBlitzColliders = new Collider2D[hitBlitzIndexor];
-        hitBlitzIndexor = 0;
-        foreach (Collider2D ht in blitzColliders)
-        {
-          if (ht.TryGetComponent<Prey>(out var htp))
-          {
-            hitBlitzColliders[hitBlitzIndexor++] = ht;
-          }
-        }
-
-        if (hitBlitzColliders.Length != 0 && ai.destination != null)
-        {
-          GetClosestInRadius(hitBlitzColliders);
-          preyState = 1;
-        }
-        else if (hitPreyColliders.Length != 0 && ai.destination != null)
-        {
-          GetClosestInRadius(hitPreyColliders);
-          preyState = 2;
-        }
-        else
-        {
-          if (this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Prey>() != null)
-          {
-            //this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Prey>().transform;
-            IAstarAI ai;
-            ai = GetComponent<IAstarAI>();
-            ai.destination = FindObjectOfType<Prey>().transform.position;
-            smallestDistance = preyRadius;
-            GetClosestInRadius();
-
-          }
-          else if (this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Player>() != null)
-          {
-
-            //this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Player>().transform;
-            IAstarAI ai;
-            ai = GetComponent<IAstarAI>();
-            ai.destination = FindObjectOfType<Player>().transform.position;
-          }
-          else
-          {
-            wander();
-            preyState = 0;
-          }
-
-        }
-
-      }
-      if (this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Prey>() != null)
-      {
-        //this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Prey>().transform;
-        IAstarAI ai;
-        ai = GetComponent<IAstarAI>();
-        ai.destination = FindObjectOfType<Prey>().transform.position;
-        smallestDistance = preyRadius;
-        GetClosestInRadius();
-
-      }
-      else if (this.gameObject.GetComponent<AIDestinationSetter>()?.target == null && FindObjectOfType<Player>() != null)
-      {
-
-        //this.gameObject.GetComponent<AIDestinationSetter>().target = FindObjectOfType<Player>().transform;
-        IAstarAI ai;
-        ai = GetComponent<IAstarAI>();
-        ai.destination = FindObjectOfType<Player>().transform.position;
-        smallestDistance = preyRadius;
-      }
-      else
-      {
-        wander();
-        preyState = 0;
-      }
-    }
+         smallestDistance = preyRadius;
+       }
+       else
+       {
+         wander();
+         preyState = 0;
+       }
+     }
   }
   float smallestDistance = preyRadius;
   int maxCount = 0;

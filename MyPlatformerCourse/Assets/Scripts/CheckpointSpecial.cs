@@ -5,44 +5,49 @@ using UnityEngine;
 public class CheckpointSpecial : Checkpoint
 {
 
-  private GameMaster gm;
+ // private GameMaster gm;
 
   void Start()
   {
-    gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameMaster>();
+   // gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameMaster>();
   }
   private void OnTriggerEnter2D(Collider2D other)
   {
     if (other.CompareTag("Player"))
     {
-      GameObject.Find("CheckpointsLevel3").GetComponent<Checkpoints>().setColorToFalse();
+      GameObject.Find("Checkpoints").GetComponent<Checkpoints>().setColorToFalse();
       other.GetComponent<Player>().checkPoint = this;
       isActive = true;
-      GameObject.Find("CheckpointsLevel3").GetComponent<Checkpoints>().setColor();
+      GameObject.Find("Checkpoints").GetComponent<Checkpoints>().setColor();
     }
   }
 
   private void OnDestroy()
   {
-      Checkpoint[] chec = new Checkpoint[GameObject.Find("CheckpointsLevel3").GetComponent<Checkpoints>().checkpoints.Length - 1];
-    int i = 0;
-    foreach (Checkpoint ch in GameObject.Find("CheckpointsLevel3").GetComponent<Checkpoints>().checkpoints)
+    if (GameObject.Find("Checkpoints"))
     {
-      if(ch == this)
+      Checkpoint[] chec = new Checkpoint[GameObject.Find("Checkpoints").GetComponent<Checkpoints>().checkpoints.Length - 1];
+      int i = 0;
+      foreach (Checkpoint ch in GameObject.Find("Checkpoints").GetComponent<Checkpoints>().checkpoints)
       {
-        //Same Checkpoint
+        if (ch == this)
+        {
+          //Same Checkpoint
+        }
+        else
+        {
+          chec[i++] = ch;
+        }
       }
-      else     
+      if (i != 0)
       {
-        chec[i++] = ch;
+        chec[0].isActive = true;
+        if (GameObject.FindGameObjectWithTag("Player"))
+        {
+          GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().checkPoint = chec[GameObject.Find("Checkpoints").GetComponent<Checkpoints>().checkpoints.Length - 2];
+          GameObject.Find("Checkpoints").GetComponent<Checkpoints>().checkpoints = chec;
+        }
       }
     }
-    if (i != 0)
-    {
-      chec[0].isActive = true;
-      GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().checkPoint = chec[0];
-      GameObject.Find("CheckpointsLevel3").GetComponent<Checkpoints>().checkpoints = chec;
-    }
-
   }
 }

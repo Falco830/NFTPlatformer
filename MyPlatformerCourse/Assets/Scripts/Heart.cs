@@ -18,8 +18,13 @@ public class Heart : MonoBehaviour
 
     private void Start()
     {
+      if (FindObjectOfType<Player>())
+      {
         player = FindObjectOfType<Player>();
         lives.text = player.lives.ToString();
+      }
+
+       
     }
 
     private void Update()
